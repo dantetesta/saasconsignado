@@ -163,28 +163,170 @@ include 'includes/header.php';
                 <input type="hidden" name="foto_antiga" value="<?php echo $editProduto['foto'] ?? ''; ?>">
             <?php endif; ?>
 
-            <!-- Upload de Foto -->
-            <div class="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300">
-                <label class="block text-sm font-medium text-gray-700 mb-3">
-                    Foto do Produto (500x500px)
-                </label>
+            <!-- Layout em 2 Colunas -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <div class="flex flex-col md:flex-row gap-6 items-start">
-                    <!-- Preview da imagem -->
-                    <div class="flex-shrink-0">
-                        <div id="imagePreview" class="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden border-2 border-gray-300 flex items-center justify-center">
-                            <?php if ($editProduto && $editProduto['foto']): ?>
-                                <img src="<?php echo ImageUploader::getImageUrl($editProduto['foto']); ?>" alt="Preview" class="w-full h-full object-cover">
-                            <?php else: ?>
-                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            <?php endif; ?>
+                <!-- Coluna 1: Dados do Produto (2/3) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-lg border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Dados do Produto
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Nome -->
+                            <div>
+                                <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Nome do Produto *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="nome" 
+                                    name="nome" 
+                                    required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    value="<?php echo $editProduto ? sanitize($editProduto['nome']) : ''; ?>"
+                                    placeholder="Ex: Pipoca Gourmet - Caramelo"
+                                >
+                            </div>
+
+                            <!-- Descrição -->
+                            <div>
+                                <label for="descricao" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Descrição
+                                </label>
+                                <textarea 
+                                    id="descricao" 
+                                    name="descricao" 
+                                    rows="3"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    placeholder="Descrição detalhada do produto"
+                                ><?php echo $editProduto ? sanitize($editProduto['descricao']) : ''; ?></textarea>
+                            </div>
+
+                            <!-- Grid de Preços -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Preço de Venda -->
+                                <div>
+                                    <label for="preco_venda_display" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Preço de Venda (R$) *
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="preco_venda_display"
+                                        required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        placeholder="R$ 0,00"
+                                        maxlength="20"
+                                    >
+                                    <input type="hidden" id="preco_venda" name="preco_venda" value="<?php echo $editProduto ? $editProduto['preco_venda'] : ''; ?>">
+                                </div>
+
+                                <!-- Preço de Custo -->
+                                <div>
+                                    <label for="preco_custo_display" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Preço de Custo (R$)
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="preco_custo_display"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        placeholder="R$ 0,00"
+                                        maxlength="20"
+                                    >
+                                    <input type="hidden" id="preco_custo" name="preco_custo" value="<?php echo $editProduto ? $editProduto['preco_custo'] : ''; ?>">
+                                </div>
+                            </div>
+
+                            <!-- Grid de Estoque -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Estoque Total -->
+                                <div>
+                                    <label for="estoque_total" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Estoque Total *
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="estoque_total" 
+                                        name="estoque_total" 
+                                        min="0"
+                                        required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        value="<?php echo $editProduto ? $editProduto['estoque_total'] : ''; ?>"
+                                        placeholder="0"
+                                    >
+                                </div>
+
+                                <!-- Estoque Mínimo -->
+                                <div>
+                                    <label for="estoque_minimo" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Estoque Mínimo *
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="estoque_minimo" 
+                                        name="estoque_minimo" 
+                                        min="0"
+                                        required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        value="<?php echo $editProduto ? $editProduto['estoque_minimo'] : '10'; ?>"
+                                        placeholder="10"
+                                    >
+                                    <p class="text-xs text-gray-500 mt-1">Alerta quando estoque ficar abaixo deste valor</p>
+                                </div>
+                            </div>
+
+                            <!-- Status Ativo/Inativo -->
+                            <div>
+                                <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-700">Produto Ativo</span>
+                                        <p class="text-xs text-gray-500 mt-1">Produtos inativos não aparecem nas consignações</p>
+                                    </div>
+                                    <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
+                                        <input 
+                                            type="checkbox" 
+                                            id="ativo" 
+                                            name="ativo" 
+                                            class="sr-only peer"
+                                            <?php echo (!$editProduto || $editProduto['ativo']) ? 'checked' : ''; ?>
+                                        >
+                                        <label for="ativo" class="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer peer-checked:bg-green-500 transition-colors"></label>
+                                        <span class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-6"></span>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Input de arquivo -->
-                    <div class="flex-1">
+                </div>
+
+                <!-- Coluna 2: Upload de Imagem (1/3) -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Foto do Produto
+                        </h3>
+
+                        <!-- Preview da imagem -->
+                        <div class="mb-4">
+                            <div id="imagePreview" class="w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-300 flex items-center justify-center">
+                                <?php if ($editProduto && $editProduto['foto']): ?>
+                                    <img src="<?php echo ImageUploader::getImageUrl($editProduto['foto']); ?>" alt="Preview" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <!-- Input de arquivo -->
                         <input 
                             type="file" 
                             id="fotoInput" 
@@ -193,136 +335,23 @@ include 'includes/header.php';
                             onchange="openCropModal(this)"
                         >
                         <input type="hidden" id="fotoCropped" name="foto_cropped">
-                        <label for="fotoInput" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
-                            <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        
+                        <label for="fotoInput" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg cursor-pointer hover:from-purple-700 hover:to-pink-700 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
                             Escolher Imagem
                         </label>
-                        <p class="text-xs text-gray-500 mt-2">
-                            Formatos: JPEG, PNG, WEBP, GIF (máx 5MB)<br>
-                            Você poderá ajustar o crop em formato quadrado 1:1
-                        </p>
+                        
+                        <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                            <p class="text-xs text-blue-800">
+                                <strong>📐 Formato:</strong> Quadrado 1:1<br>
+                                <strong>📏 Tamanho:</strong> 500x500px<br>
+                                <strong>📁 Tipos:</strong> JPEG, PNG, WEBP, GIF<br>
+                                <strong>💾 Máximo:</strong> 5MB
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Nome -->
-                <div class="md:col-span-2">
-                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
-                        Nome do Produto *
-                    </label>
-                    <input 
-                        type="text" 
-                        id="nome" 
-                        name="nome" 
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        value="<?php echo $editProduto ? sanitize($editProduto['nome']) : ''; ?>"
-                        placeholder="Ex: Pipoca Gourmet - Caramelo"
-                    >
-                </div>
-
-                <!-- Descrição -->
-                <div class="md:col-span-2">
-                    <label for="descricao" class="block text-sm font-medium text-gray-700 mb-2">
-                        Descrição
-                    </label>
-                    <textarea 
-                        id="descricao" 
-                        name="descricao" 
-                        rows="3"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Descrição detalhada do produto"
-                    ><?php echo $editProduto ? sanitize($editProduto['descricao']) : ''; ?></textarea>
-                </div>
-
-                <!-- Preço de Venda -->
-                <div>
-                    <label for="preco_venda_display" class="block text-sm font-medium text-gray-700 mb-2">
-                        Preço de Venda (R$) *
-                    </label>
-                    <input 
-                        type="text" 
-                        id="preco_venda_display"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="R$ 0,00"
-                        maxlength="20"
-                    >
-                    <input type="hidden" id="preco_venda" name="preco_venda" value="<?php echo $editProduto ? $editProduto['preco_venda'] : ''; ?>">
-                </div>
-
-                <!-- Preço de Custo -->
-                <div>
-                    <label for="preco_custo_display" class="block text-sm font-medium text-gray-700 mb-2">
-                        Preço de Custo (R$)
-                    </label>
-                    <input 
-                        type="text" 
-                        id="preco_custo_display"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="R$ 0,00"
-                        maxlength="20"
-                    >
-                    <input type="hidden" id="preco_custo" name="preco_custo" value="<?php echo $editProduto ? $editProduto['preco_custo'] : ''; ?>">
-                </div>
-
-                <!-- Estoque Total -->
-                <div>
-                    <label for="estoque_total" class="block text-sm font-medium text-gray-700 mb-2">
-                        Estoque Total *
-                    </label>
-                    <input 
-                        type="number" 
-                        id="estoque_total" 
-                        name="estoque_total" 
-                        min="0"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        value="<?php echo $editProduto ? $editProduto['estoque_total'] : ''; ?>"
-                        placeholder="0"
-                    >
-                </div>
-
-                <!-- Estoque Mínimo -->
-                <div>
-                    <label for="estoque_minimo" class="block text-sm font-medium text-gray-700 mb-2">
-                        Estoque Mínimo *
-                    </label>
-                    <input 
-                        type="number" 
-                        id="estoque_minimo" 
-                        name="estoque_minimo" 
-                        min="0"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        value="<?php echo $editProduto ? $editProduto['estoque_minimo'] : '10'; ?>"
-                        placeholder="10"
-                    >
-                    <p class="text-xs text-gray-500 mt-1">Alerta quando estoque ficar abaixo deste valor</p>
-                </div>
-
-                <!-- Status Ativo/Inativo -->
-                <div class="md:col-span-2">
-                    <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <div>
-                            <span class="text-sm font-medium text-gray-700">Produto Ativo</span>
-                            <p class="text-xs text-gray-500 mt-1">Produtos inativos não aparecem nas consignações</p>
-                        </div>
-                        <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
-                            <input 
-                                type="checkbox" 
-                                id="ativo" 
-                                name="ativo" 
-                                class="sr-only peer"
-                                <?php echo (!$editProduto || $editProduto['ativo']) ? 'checked' : ''; ?>
-                            >
-                            <label for="ativo" class="block h-6 w-12 rounded-full bg-gray-300 cursor-pointer peer-checked:bg-green-500 transition-colors"></label>
-                            <span class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-6"></span>
-                        </div>
-                    </label>
                 </div>
             </div>
 
