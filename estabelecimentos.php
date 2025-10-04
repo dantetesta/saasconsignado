@@ -29,14 +29,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         try {
             if ($action === 'create') {
+                // Verificar limite do plano (SaaS)
+                TenantMiddleware::canCreateEstabelecimento();
+                
                 // Gerar token único para o estabelecimento
                 $token_acesso = bin2hex(random_bytes(32));
                 
                 // Hash da senha se foi fornecida
                 $senha_hash = !empty($senha_acesso) ? password_hash($senha_acesso, PASSWORD_DEFAULT) : null;
                 
-                $stmt = $db->prepare("INSERT INTO estabelecimentos (nome, responsavel, email, telefone, whatsapp, senha_acesso, token_acesso, endereco, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$nome, $responsavel, $email, $telefone, $whatsapp, $senha_hash, $token_acesso, $endereco, $observacoes]);
+                // Adicionar tenant_id na criação
+                $tenant_id = getTenantId();
+                $stmt = $db->prepare("INSERT INTO estabelecimentos (tenant_id, nome, responsavel, email, telefone, whatsapp, senha_acesso, token_acesso, endereco, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$tenant_id, $nome, $responsavel, $email, $telefone, $whatsapp, $senha_hash, $token_acesso, $endereco, $observacoes]);
                 setFlashMessage('success', 'Estabelecimento cadastrado com sucesso!');
             } else {
                 // Atualizar senha apenas se foi fornecida uma nova
@@ -51,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setFlashMessage('success', 'Estabelecimento atualizado com sucesso!');
             }
             redirect('/estabelecimentos.php');
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             error_log("Erro ao salvar estabelecimento: " . $e->getMessage());
-            setFlashMessage('error', 'Erro ao salvar estabelecimento.');
+            setFlashMessage('error', $e->getMessage());
         }
     } elseif ($action === 'delete') {
         $id = $_POST['id'];
@@ -69,10 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Buscar estabelecimentos
+// Buscar estabelecimentos (filtrado por tenant)
 $search = $_GET['search'] ?? '';
-$whereClause = "WHERE e.ativo = 1";
-$params = [];
+$tenant_id = getTenantId();
+$whereClause = "WHERE e.ativo = 1 AND e.tenant_id = ?";
+$params = [$tenant_id];
 
 if (!empty($search)) {
     $whereClause .= " AND (e.nome LIKE ? OR e.responsavel LIKE ?)";
@@ -86,20 +92,36 @@ $stmt = $db->prepare("
         COUNT(DISTINCT c.id) as total_consignacoes,
         COUNT(DISTINCT CASE WHEN c.status IN ('pendente', 'parcial') THEN c.id END) as consignacoes_ativas
     FROM estabelecimentos e
-    LEFT JOIN consignacoes c ON e.id = c.estabelecimento_id
+    LEFT JOIN consignacoes c ON e.id = c.estabelecimento_id AND c.tenant_id = ?
     $whereClause
     GROUP BY e.id
     ORDER BY e.nome ASC
 ");
-$stmt->execute($params);
+$params_with_tenant = array_merge([$tenant_id], $params);
+$stmt->execute($params_with_tenant);
 $estabelecimentos = $stmt->fetchAll();
 
-// Se for edição, buscar estabelecimento específico
+// Se for edição, buscar estabelecimento específico (do tenant)
 $editEstabelecimento = null;
 if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
-    $stmt = $db->prepare("SELECT * FROM estabelecimentos WHERE id = ? AND ativo = 1");
-    $stmt->execute([$_GET['id']]);
+    $stmt = $db->prepare("SELECT * FROM estabelecimentos WHERE id = ? AND tenant_id = ? AND ativo = 1");
+    $stmt->execute([$_GET['id'], $tenant_id]);
     $editEstabelecimento = $stmt->fetch();
+}
+
+// Verificar limite do plano para exibir aviso
+$plan_info = getPlanInfo();
+$pode_criar = true;
+$limite_msg = '';
+
+if ($plan_info && $plan_info['plano'] === 'free') {
+    $total_estabelecimentos = count($estabelecimentos);
+    $limite = $plan_info['limites']['estabelecimentos'];
+    
+    if ($total_estabelecimentos >= $limite) {
+        $pode_criar = false;
+        $limite_msg = "Você atingiu o limite de {$limite} estabelecimentos no plano Free. Faça upgrade para o Plano Pro para adicionar mais!";
+    }
 }
 
 $showForm = isset($_GET['action']) && ($_GET['action'] === 'new' || $_GET['action'] === 'edit');
@@ -121,14 +143,37 @@ include 'includes/header.php';
         <p class="text-gray-600 mt-1">Gerencie os estabelecimentos parceiros</p>
     </div>
     <?php if (!$showForm): ?>
-        <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Novo Estabelecimento
-        </a>
+        <?php if ($pode_criar): ?>
+            <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Novo Estabelecimento
+            </a>
+        <?php else: ?>
+            <a href="/upgrade.php" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition shadow-md">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Fazer Upgrade
+            </a>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
+
+<?php if ($limite_msg && !$showForm): ?>
+    <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+        <div class="flex">
+            <svg class="w-5 h-5 text-yellow-400 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <div>
+                <h3 class="text-sm font-medium text-yellow-800">Limite Atingido</h3>
+                <p class="mt-1 text-sm text-yellow-700"><?php echo htmlspecialchars($limite_msg); ?></p>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php if ($showForm): ?>
     <!-- Formulário de Estabelecimento -->

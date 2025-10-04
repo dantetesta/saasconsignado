@@ -25,11 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT id, nome, email, senha FROM usuarios WHERE email = ? AND ativo = 1");
+            $stmt = $db->prepare("
+                SELECT id, tenant_id, nome, email, senha 
+                FROM usuarios 
+                WHERE email = ? AND ativo = 1
+            ");
             $stmt->execute([$email]);
             $user = $stmt->fetch();
             
             if ($user && password_verify($senha, $user['senha'])) {
+                // Carregar classe TenantMiddleware
+                require_once __DIR__ . '/classes/TenantMiddleware.php';
+                
+                // Definir tenant antes de fazer login
+                TenantMiddleware::setTenant($user['tenant_id']);
+                
                 // Login bem-sucedido
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['nome'];
@@ -132,6 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Entrar
                 </button>
             </form>
+
+            <!-- Link para Registro -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Não tem uma conta? 
+                    <a href="/register.php" class="text-purple-600 hover:text-purple-700 font-medium">Cadastre-se grátis</a>
+                </p>
+            </div>
 
         </div>
 

@@ -3,7 +3,7 @@
  * Dashboard Principal
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.0.0
+ * @version 2.0.0 SaaS
  */
 
 require_once 'config/config.php';
@@ -11,49 +11,58 @@ requireLogin();
 
 $pageTitle = 'Dashboard';
 
-// Buscar estatísticas
+// Buscar estatísticas (filtradas por tenant)
 $db = Database::getInstance()->getConnection();
+$tenant_id = getTenantId();
 
-// Total de consignações ativas
-$stmt = $db->query("SELECT COUNT(*) as total FROM consignacoes WHERE status IN ('pendente', 'parcial')");
+// Total de consignações ativas (do tenant)
+$stmt = $db->prepare("SELECT COUNT(*) as total FROM consignacoes WHERE status IN ('pendente', 'parcial') AND tenant_id = ?");
+$stmt->execute([$tenant_id]);
 $consignacoesAtivas = $stmt->fetch()['total'];
 
-// Consignações por tipo
-$stmt = $db->query("
+// Consignações por tipo (do tenant)
+$stmt = $db->prepare("
     SELECT 
         tipo,
         COUNT(*) as total 
     FROM consignacoes 
-    WHERE status IN ('pendente', 'parcial')
+    WHERE tenant_id = ?
     GROUP BY tipo
 ");
+$stmt->execute([$tenant_id]);
 $consignacoesPorTipo = [];
 while ($row = $stmt->fetch()) {
     $consignacoesPorTipo[$row['tipo']] = $row['total'];
 }
-$consignacoesPontuais = $consignacoesPorTipo['pontual'] ?? 0;
-$consignacoesContinuas = $consignacoesPorTipo['continua'] ?? 0;
 
-// Total de produtos
-$stmt = $db->query("SELECT COUNT(*) as total FROM produtos WHERE ativo = 1");
+// Total de consignações (do tenant)
+$stmt = $db->prepare("SELECT COUNT(*) as total FROM consignacoes WHERE tenant_id = ?");
+$stmt->execute([$tenant_id]);
+$totalConsignacoes = $stmt->fetch()['total'];
+
+// Total de produtos (do tenant)
+$stmt = $db->prepare("SELECT COUNT(*) as total FROM produtos WHERE ativo = 1 AND tenant_id = ?");
+$stmt->execute([$tenant_id]);
 $totalProdutos = $stmt->fetch()['total'];
 
-// Total de estabelecimentos
-$stmt = $db->query("SELECT COUNT(*) as total FROM estabelecimentos WHERE ativo = 1");
+// Total de estabelecimentos (do tenant)
+$stmt = $db->prepare("SELECT COUNT(*) as total FROM estabelecimentos WHERE ativo = 1 AND tenant_id = ?");
+$stmt->execute([$tenant_id]);
 $totalEstabelecimentos = $stmt->fetch()['total'];
 
 // Valor total a receber (usando VIEW consolidada)
-$stmt = $db->query("
+$stmt = $db->prepare("
     SELECT 
         COALESCE(SUM(valor_total), 0) - 
-        COALESCE((SELECT SUM(valor_pago) FROM pagamentos p WHERE p.consignacao_id IN (SELECT id FROM consignacoes WHERE status IN ('pendente', 'parcial'))), 0) as total
+        COALESCE((SELECT SUM(valor_pago) FROM pagamentos p WHERE p.consignacao_id IN (SELECT id FROM consignacoes WHERE status IN ('pendente', 'parcial') AND tenant_id = ?) AND p.tenant_id = ?), 0) as total
     FROM vw_vendas_consolidadas
-    WHERE consignacao_id IN (SELECT id FROM consignacoes WHERE status IN ('pendente', 'parcial'))
+    WHERE tenant_id = ? AND consignacao_id IN (SELECT id FROM consignacoes WHERE status IN ('pendente', 'parcial') AND tenant_id = ?)
 ");
+$stmt->execute([$tenant_id, $tenant_id, $tenant_id, $tenant_id]);
 $valorAReceber = $stmt->fetch()['total'];
 
-// Últimas consignações (com tipo)
-$stmt = $db->query("
+// Últimas consignações (com tipo, do tenant)
+$stmt = $db->prepare("
     SELECT 
         c.id,
         c.tipo,
@@ -63,17 +72,19 @@ $stmt = $db->query("
         COALESCE((
             SELECT SUM(valor_total) 
             FROM vw_vendas_consolidadas v 
-            WHERE v.consignacao_id = c.id
+            WHERE v.consignacao_id = c.id AND v.tenant_id = ?
         ), 0) as valor_total
     FROM consignacoes c
     INNER JOIN estabelecimentos e ON c.estabelecimento_id = e.id
+    WHERE c.tenant_id = ?
     ORDER BY c.data_consignacao DESC
     LIMIT 5
 ");
+$stmt->execute([$tenant_id, $tenant_id]);
 $ultimasConsignacoes = $stmt->fetchAll();
 
-// Produtos com baixo estoque (menos de 20 unidades)
-$stmt = $db->query("
+// Produtos com baixo estoque (menos de 20 unidades, do tenant)
+$stmt = $db->prepare("
     SELECT 
         p.id,
         p.nome,
@@ -81,14 +92,15 @@ $stmt = $db->query("
         COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0) as quantidade_consignada,
         (p.estoque_total - COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0)) as estoque_disponivel
     FROM produtos p
-    LEFT JOIN consignacao_itens ci ON p.id = ci.produto_id
-    LEFT JOIN consignacoes c ON ci.consignacao_id = c.id AND c.status IN ('pendente', 'parcial')
-    WHERE p.ativo = 1
+    LEFT JOIN consignacao_itens ci ON p.id = ci.produto_id AND ci.tenant_id = ?
+    LEFT JOIN consignacoes c ON ci.consignacao_id = c.id AND c.status IN ('pendente', 'parcial') AND c.tenant_id = ?
+    WHERE p.ativo = 1 AND p.tenant_id = ?
     GROUP BY p.id, p.nome, p.estoque_total
     HAVING estoque_disponivel < 20
     ORDER BY estoque_disponivel ASC
     LIMIT 5
 ");
+$stmt->execute([$tenant_id, $tenant_id, $tenant_id]);
 $produtosBaixoEstoque = $stmt->fetchAll();
 
 include 'includes/header.php';

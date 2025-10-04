@@ -62,13 +62,14 @@ if ($consignacao['tipo'] === 'continua') {
     $itens = $stmt->fetchAll();
 }
 
-// Buscar pagamentos
+// Buscar pagamentos (do tenant)
+$tenant_id = getTenantId();
 $stmt = $db->prepare("
     SELECT * FROM pagamentos 
-    WHERE consignacao_id = ? 
+    WHERE consignacao_id = ? AND tenant_id = ?
     ORDER BY data_pagamento DESC
 ");
-$stmt->execute([$consignacaoId]);
+$stmt->execute([$consignacaoId, $tenant_id]);
 $pagamentos = $stmt->fetchAll();
 
 // Buscar movimentações (se for consignação contínua)

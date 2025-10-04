@@ -47,7 +47,7 @@ define('SITE_NAME', 'Sistema de Consignados');
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 define('SITE_URL', $protocol . '://' . $host . BASE_PATH);
-define('VERSION', '1.3.0');
+define('VERSION', '2.0.0 SaaS');
 
 // Configurações de paginação
 define('ITEMS_PER_PAGE', 20);
@@ -58,6 +58,15 @@ if (!file_exists($database_file)) {
     die("ERRO: Arquivo de configuração do banco de dados não encontrado em: $database_file<br>Verifique se o arquivo config/database.php existe.");
 }
 require_once $database_file;
+
+// Carregar configurações de integrações (Pagou, Postmark)
+require_once __DIR__ . '/integrations.php';
+
+// Carregar classe TenantMiddleware para multi-tenancy
+require_once __DIR__ . '/../classes/TenantMiddleware.php';
+
+// Inicializar tenant middleware
+TenantMiddleware::initialize();
 
 /**
  * Função auxiliar para redirecionar
@@ -95,6 +104,24 @@ function isLoggedIn() {
 function requireLogin() {
     if (!isLoggedIn()) {
         redirect('/login.php');
+    }
+    
+    // Verificar se tenant está definido (SaaS)
+    if (!TenantMiddleware::hasTenant()) {
+        // Tentar recuperar da sessão
+        if (isset($_SESSION['tenant_id'])) {
+            try {
+                TenantMiddleware::setTenant($_SESSION['tenant_id']);
+            } catch (Exception $e) {
+                // Se falhar, fazer logout
+                session_destroy();
+                redirect('/login.php');
+            }
+        } else {
+            // Sem tenant, fazer logout
+            session_destroy();
+            redirect('/login.php');
+        }
     }
 }
 
@@ -275,9 +302,10 @@ function atualizarStatusAutomatico($db, $consignacao_id) {
             $valor_vendido = $totais['valor_vendido'];
         }
         
-        // Buscar valor pago
-        $stmt = $db->prepare("SELECT COALESCE(SUM(valor_pago), 0) as valor_pago FROM pagamentos WHERE consignacao_id = ?");
-        $stmt->execute([$consignacao_id]);
+        // Buscar valor pago (do tenant)
+        $tenant_id = TenantMiddleware::getTenantId();
+        $stmt = $db->prepare("SELECT COALESCE(SUM(valor_pago), 0) as valor_pago FROM pagamentos WHERE consignacao_id = ? AND tenant_id = ?");
+        $stmt->execute([$consignacao_id, $tenant_id]);
         $valor_pago = $stmt->fetchColumn();
         
         $saldo_pendente = $valor_vendido - $valor_pago;
@@ -319,4 +347,56 @@ function getStatusBadgeClass($status) {
         'cancelada' => 'bg-red-100 text-red-800'
     ];
     return $classes[$status] ?? 'bg-gray-100 text-gray-800';
+}
+
+/**
+ * Funções Helper para Multi-Tenancy
+ */
+
+/**
+ * Obter tenant atual
+ * 
+ * @return array|null
+ */
+function getCurrentTenant() {
+    return TenantMiddleware::getTenantData();
+}
+
+/**
+ * Obter ID do tenant atual
+ * 
+ * @return int|null
+ */
+function getTenantId() {
+    return TenantMiddleware::getTenantId();
+}
+
+/**
+ * Verificar se está no plano Pro
+ * 
+ * @return bool
+ */
+function isProPlan() {
+    $tenant = getCurrentTenant();
+    return $tenant && $tenant['plano'] === 'pro';
+}
+
+/**
+ * Verificar limite do plano
+ * 
+ * @param string $resource Recurso a verificar
+ * @param int $current_count Contagem atual
+ * @return bool
+ */
+function checkTenantLimit($resource, $current_count) {
+    return TenantMiddleware::checkLimit($resource, $current_count);
+}
+
+/**
+ * Obter informações do plano
+ * 
+ * @return array|null
+ */
+function getPlanInfo() {
+    return TenantMiddleware::getPlanInfo();
 }

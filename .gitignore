@@ -3,7 +3,11 @@
 
 # Arquivos de configuração sensíveis
 config/email.php
+config/integrations.php
 composer.phar
+
+# Arquivos temporários SaaS
+create_tenants.php
 
 # Logs
 *.log

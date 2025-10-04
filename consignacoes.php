@@ -3,7 +3,7 @@
  * Gerenciamento de Consignações
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.0.0
+ * @version 2.0.0 SaaS
  */
 
 require_once 'config/config.php';
@@ -26,20 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $quantidades = $_POST['quantidades'] ?? [];
         
         try {
+            // Verificar limite do plano (SaaS)
+            TenantMiddleware::canCreateConsignacao($estabelecimento_id);
+            
             $db->beginTransaction();
             
-            // Inserir consignação com tipo
-            $stmt = $db->prepare("INSERT INTO consignacoes (estabelecimento_id, tipo, data_consignacao, data_vencimento, observacoes, status) VALUES (?, ?, ?, ?, ?, 'pendente')");
-            $stmt->execute([$estabelecimento_id, $tipo, $data_consignacao, $data_vencimento, $observacoes]);
+            // Inserir consignação com tenant_id
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("INSERT INTO consignacoes (tenant_id, estabelecimento_id, tipo, data_consignacao, data_vencimento, observacoes, status) VALUES (?, ?, ?, ?, ?, ?, 'pendente')");
+            $stmt->execute([$tenant_id, $estabelecimento_id, $tipo, $data_consignacao, $data_vencimento, $observacoes]);
             $consignacao_id = $db->lastInsertId();
             
             // Inserir itens
             foreach ($produtos as $index => $produto_id) {
                 $quantidade = intval($quantidades[$index]);
                 if ($quantidade > 0) {
-                    // Buscar preço e estoque do produto
-                    $stmt = $db->prepare("SELECT preco_venda, estoque_total FROM produtos WHERE id = ?");
-                    $stmt->execute([$produto_id]);
+                    // Buscar preço e estoque do produto (do tenant)
+                    $stmt = $db->prepare("SELECT preco_venda, estoque_total FROM produtos WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$produto_id, $tenant_id]);
                     $produto = $stmt->fetch();
                     $preco = $produto['preco_venda'];
                     $estoque_atual = $produto['estoque_total'];
@@ -51,20 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     if ($tipo === 'continua') {
                         // Para consignações contínuas, criar movimentação de entrega inicial
-                        $stmt = $db->prepare("INSERT INTO movimentacoes_consignacao (consignacao_id, produto_id, tipo, quantidade, preco_unitario, data_movimentacao, observacoes) VALUES (?, ?, 'entrega', ?, ?, ?, 'Entrega inicial')");
-                        $stmt->execute([$consignacao_id, $produto_id, $quantidade, $preco, $data_consignacao]);
+                        $stmt = $db->prepare("INSERT INTO movimentacoes_consignacao (tenant_id, consignacao_id, produto_id, tipo, quantidade, preco_unitario, data_movimentacao, observacoes) VALUES (?, ?, ?, 'entrega', ?, ?, ?, 'Entrega inicial')");
+                        $stmt->execute([$tenant_id, $consignacao_id, $produto_id, $quantidade, $preco, $data_consignacao]);
                         
-                        // Baixar do estoque (já é feito na movimentação de entrega)
-                        $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ?");
-                        $stmt->execute([$quantidade, $produto_id]);
+                        // Baixar do estoque (apenas produtos do tenant)
+                        $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ? AND tenant_id = ?");
+                        $stmt->execute([$quantidade, $produto_id, $tenant_id]);
                     } else {
                         // Para consignações pontuais, usar tabela normal
-                        $stmt = $db->prepare("INSERT INTO consignacao_itens (consignacao_id, produto_id, quantidade_consignada, preco_unitario) VALUES (?, ?, ?, ?)");
-                        $stmt->execute([$consignacao_id, $produto_id, $quantidade, $preco]);
+                        $stmt = $db->prepare("INSERT INTO consignacao_itens (tenant_id, consignacao_id, produto_id, quantidade_consignada, preco_unitario) VALUES (?, ?, ?, ?, ?)");
+                        $stmt->execute([$tenant_id, $consignacao_id, $produto_id, $quantidade, $preco]);
                         
-                        // Baixar do estoque
-                        $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ?");
-                        $stmt->execute([$quantidade, $produto_id]);
+                        // Baixar do estoque (apenas produtos do tenant)
+                        $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ? AND tenant_id = ?");
+                        $stmt->execute([$quantidade, $produto_id, $tenant_id]);
                     }
                 }
             }
@@ -72,10 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->commit();
             setFlashMessage('success', 'Consignação criada com sucesso!');
             redirect('/consignacoes.php');
-        } catch (PDOException $e) {
-            $db->rollBack();
+        } catch (Exception $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
             error_log("Erro ao criar consignação: " . $e->getMessage());
-            setFlashMessage('error', 'Erro ao criar consignação.');
+            setFlashMessage('error', $e->getMessage());
         }
     } elseif ($action === 'update_status') {
         // Log temporário para debug
@@ -144,9 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $db->beginTransaction();
             
-            // Buscar tipo da consignação
-            $stmt = $db->prepare("SELECT tipo FROM consignacoes WHERE id = ?");
-            $stmt->execute([$id]);
+            // Buscar tipo da consignação (do tenant)
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("SELECT tipo FROM consignacoes WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tenant_id]);
             $consignacao = $stmt->fetch();
             
             if ($consignacao['tipo'] === 'pontual') {
@@ -287,8 +294,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $observacoes = sanitize($_POST['observacoes_pagamento']);
         
         try {
-            $stmt = $db->prepare("INSERT INTO pagamentos (consignacao_id, data_pagamento, valor_pago, forma_pagamento, observacoes) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$consignacao_id, $data_pagamento, $valor_pago, $forma_pagamento, $observacoes]);
+            // Incluir tenant_id no pagamento
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("INSERT INTO pagamentos (tenant_id, consignacao_id, data_pagamento, valor_pago, forma_pagamento, observacoes) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$tenant_id, $consignacao_id, $data_pagamento, $valor_pago, $forma_pagamento, $observacoes]);
             
             // Atualizar status automático
             atualizarStatusAutomatico($db, $consignacao_id);
@@ -308,8 +317,9 @@ $consignacaoId = $_GET['id'] ?? null;
 
 // Verificar se é consignação contínua tentando acessar update
 if ($currentAction === 'update' && $consignacaoId) {
-    $stmt = $db->prepare("SELECT tipo FROM consignacoes WHERE id = ?");
-    $stmt->execute([$consignacaoId]);
+    $tenant_id = getTenantId();
+    $stmt = $db->prepare("SELECT tipo FROM consignacoes WHERE id = ? AND tenant_id = ?");
+    $stmt->execute([$consignacaoId, $tenant_id]);
     $consig = $stmt->fetch();
     
     if ($consig && $consig['tipo'] === 'continua') {

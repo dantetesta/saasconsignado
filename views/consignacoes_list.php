@@ -64,7 +64,7 @@ $stmt = $db->prepare("
             )
             ELSE COALESCE(SUM(ci.quantidade_vendida * ci.preco_unitario), 0)
         END AS valor_total_vendido,
-        COALESCE((SELECT SUM(valor_pago) FROM pagamentos WHERE consignacao_id = c.id), 0) AS valor_pago
+        COALESCE((SELECT SUM(valor_pago) FROM pagamentos WHERE consignacao_id = c.id AND tenant_id = c.tenant_id), 0) AS valor_pago
     FROM consignacoes c
     INNER JOIN estabelecimentos e ON c.estabelecimento_id = e.id
     LEFT JOIN consignacao_itens ci ON c.id = ci.consignacao_id AND c.tipo = 'pontual'

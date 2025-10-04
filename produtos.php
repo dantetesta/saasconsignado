@@ -3,7 +3,7 @@
  * Gerenciamento de Produtos
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.0.0
+ * @version 2.0.0 SaaS
  */
 
 require_once 'config/config.php';
@@ -26,12 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         try {
             if ($action === 'create') {
-                $stmt = $db->prepare("INSERT INTO produtos (nome, descricao, preco_venda, preco_custo, estoque_total) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$nome, $descricao, $preco_venda, $preco_custo, $estoque_total]);
+                // Adicionar tenant_id na criação
+                $tenant_id = getTenantId();
+                $stmt = $db->prepare("INSERT INTO produtos (tenant_id, nome, descricao, preco_venda, preco_custo, estoque_total) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$tenant_id, $nome, $descricao, $preco_venda, $preco_custo, $estoque_total]);
                 setFlashMessage('success', 'Produto cadastrado com sucesso!');
             } else {
-                $stmt = $db->prepare("UPDATE produtos SET nome = ?, descricao = ?, preco_venda = ?, preco_custo = ?, estoque_total = ? WHERE id = ?");
-                $stmt->execute([$nome, $descricao, $preco_venda, $preco_custo, $estoque_total, $id]);
+                // Atualizar apenas produtos do tenant
+                $tenant_id = getTenantId();
+                $stmt = $db->prepare("UPDATE produtos SET nome = ?, descricao = ?, preco_venda = ?, preco_custo = ?, estoque_total = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$nome, $descricao, $preco_venda, $preco_custo, $estoque_total, $id, $tenant_id]);
                 setFlashMessage('success', 'Produto atualizado com sucesso!');
             }
             redirect('/produtos.php');
@@ -42,8 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'delete') {
         $id = $_POST['id'];
         try {
-            $stmt = $db->prepare("UPDATE produtos SET ativo = 0 WHERE id = ?");
-            $stmt->execute([$id]);
+            // Excluir apenas produtos do tenant
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("UPDATE produtos SET ativo = 0 WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tenant_id]);
             setFlashMessage('success', 'Produto removido com sucesso!');
             redirect('/produtos.php');
         } catch (PDOException $e) {
@@ -53,13 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Buscar produtos
+// Buscar produtos (filtrado por tenant)
 $search = $_GET['search'] ?? '';
-$whereClause = "WHERE ativo = 1";
-$params = [];
+$tenant_id = getTenantId();
+$whereClause = "WHERE p.ativo = 1 AND p.tenant_id = ?";
+$params = [$tenant_id];
 
 if (!empty($search)) {
-    $whereClause .= " AND (nome LIKE ? OR descricao LIKE ?)";
+    $whereClause .= " AND (p.nome LIKE ? OR p.descricao LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
@@ -70,20 +77,21 @@ $stmt = $db->prepare("
         COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0) as quantidade_consignada,
         (p.estoque_total - COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0)) as estoque_disponivel
     FROM produtos p
-    LEFT JOIN consignacao_itens ci ON p.id = ci.produto_id
-    LEFT JOIN consignacoes c ON ci.consignacao_id = c.id AND c.status IN ('pendente', 'parcial')
+    LEFT JOIN consignacao_itens ci ON p.id = ci.produto_id AND ci.tenant_id = ?
+    LEFT JOIN consignacoes c ON ci.consignacao_id = c.id AND c.status IN ('pendente', 'parcial') AND c.tenant_id = ?
     $whereClause
     GROUP BY p.id
     ORDER BY p.nome ASC
 ");
-$stmt->execute($params);
+$params_with_tenant = array_merge([$tenant_id, $tenant_id], $params);
+$stmt->execute($params_with_tenant);
 $produtos = $stmt->fetchAll();
 
-// Se for edição, buscar produto específico
+// Se for edição, buscar produto específico (do tenant)
 $editProduto = null;
 if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
-    $stmt = $db->prepare("SELECT * FROM produtos WHERE id = ? AND ativo = 1");
-    $stmt->execute([$_GET['id']]);
+    $stmt = $db->prepare("SELECT * FROM produtos WHERE id = ? AND tenant_id = ? AND ativo = 1");
+    $stmt->execute([$_GET['id'], $tenant_id]);
     $editProduto = $stmt->fetch();
 }
 

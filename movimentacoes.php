@@ -6,12 +6,11 @@
  * em consignações do tipo contínua
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.3.0
+ * @version 2.0.0 SaaS
  */
 
 require_once 'config/config.php';
 requireLogin();
-
 $pageTitle = 'Movimentações';
 $db = Database::getInstance()->getConnection();
 
@@ -49,9 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $db->beginTransaction();
             
-            // Buscar dados da movimentação antes de deletar
-            $stmt = $db->prepare("SELECT produto_id, tipo, quantidade FROM movimentacoes_consignacao WHERE id = ?");
-            $stmt->execute([$movimentacao_id]);
+            // Buscar dados da movimentação antes de deletar (do tenant)
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("SELECT produto_id, tipo, quantidade FROM movimentacoes_consignacao WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$movimentacao_id, $tenant_id]);
             $mov = $stmt->fetch();
             
             if ($mov) {
@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total + ? WHERE id = ?");
                     $stmt->execute([$mov['quantidade'], $mov['produto_id']]);
                 } elseif ($mov['tipo'] === 'devolucao') {
-                    // Devolução foi deletada: verificar se tem estoque suficiente
-                    $stmt = $db->prepare("SELECT estoque_total FROM produtos WHERE id = ?");
-                    $stmt->execute([$mov['produto_id']]);
+                    // Devolução foi deletada: verificar se tem estoque suficiente (do tenant)
+                    $stmt = $db->prepare("SELECT estoque_total FROM produtos WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$mov['produto_id'], $tenant_id]);
                     $estoque_atual = $stmt->fetchColumn();
                     
                     if ($estoque_atual < $mov['quantidade']) {
@@ -103,9 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $db->beginTransaction();
             
-            // Buscar preço do produto
-            $stmt = $db->prepare("SELECT preco_venda, estoque_total FROM produtos WHERE id = ?");
-            $stmt->execute([$produto_id]);
+            // Buscar preço do produto (do tenant)
+            $tenant_id = getTenantId();
+            $stmt = $db->prepare("SELECT preco_venda, estoque_total FROM produtos WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$produto_id, $tenant_id]);
             $produto = $stmt->fetch();
             $preco = $produto['preco_venda'];
             $estoque_geral = $produto['estoque_total'];
@@ -141,23 +142,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            // Inserir movimentação
+            // Inserir movimentação (com tenant_id)
+            $tenant_id = getTenantId();
             $stmt = $db->prepare("
                 INSERT INTO movimentacoes_consignacao 
-                (consignacao_id, produto_id, tipo, quantidade, preco_unitario, data_movimentacao, observacoes) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (tenant_id, consignacao_id, produto_id, tipo, quantidade, preco_unitario, data_movimentacao, observacoes) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$consignacao_id, $produto_id, $tipo, $quantidade, $preco, $data_movimentacao, $observacoes]);
+            $stmt->execute([$tenant_id, $consignacao_id, $produto_id, $tipo, $quantidade, $preco, $data_movimentacao, $observacoes]);
             
-            // Atualizar estoque do produto
+            // Atualizar estoque do produto (apenas do tenant)
             if ($tipo === 'entrega') {
                 // Entrega: diminui estoque (produto sai para consignação)
-                $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ?");
-                $stmt->execute([$quantidade, $produto_id]);
+                $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total - ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$quantidade, $produto_id, $tenant_id]);
             } elseif ($tipo === 'devolucao') {
                 // Devolução: aumenta estoque (produto volta)
-                $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total + ? WHERE id = ?");
-                $stmt->execute([$quantidade, $produto_id]);
+                $stmt = $db->prepare("UPDATE produtos SET estoque_total = estoque_total + ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$quantidade, $produto_id, $tenant_id]);
             }
             // Venda: não altera estoque (produto já estava consignado)
             
@@ -186,29 +188,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Buscar estoque atual (usando VIEW)
+// Buscar estoque atual (usando VIEW, do tenant)
+$tenant_id = getTenantId();
 $stmt = $db->prepare("
     SELECT * FROM vw_estoque_continuo 
-    WHERE consignacao_id = ?
+    WHERE consignacao_id = ? AND tenant_id = ?
     ORDER BY produto
 ");
-$stmt->execute([$consignacao_id]);
+$stmt->execute([$consignacao_id, $tenant_id]);
 $estoque_atual = $stmt->fetchAll();
 
-// Buscar histórico de movimentações
+// Buscar histórico de movimentações (do tenant)
 $stmt = $db->prepare("
     SELECT m.*, p.nome as produto
     FROM movimentacoes_consignacao m
     INNER JOIN produtos p ON m.produto_id = p.id
-    WHERE m.consignacao_id = ?
+    WHERE m.consignacao_id = ? AND m.tenant_id = ?
     ORDER BY m.data_movimentacao DESC, m.criado_em DESC
     LIMIT 50
 ");
-$stmt->execute([$consignacao_id]);
+$stmt->execute([$consignacao_id, $tenant_id]);
 $movimentacoes = $stmt->fetchAll();
 
-// Buscar produtos disponíveis com estoque
-$stmt = $db->query("SELECT id, nome, preco_venda, estoque_total FROM produtos WHERE ativo = 1 ORDER BY nome");
+// Buscar produtos disponíveis com estoque (do tenant)
+$stmt = $db->prepare("SELECT id, nome, preco_venda, estoque_total FROM produtos WHERE ativo = 1 AND tenant_id = ? ORDER BY nome");
+$stmt->execute([$tenant_id]);
 $produtos = $stmt->fetchAll();
 
 include 'includes/header.php';

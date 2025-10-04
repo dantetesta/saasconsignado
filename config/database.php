@@ -8,9 +8,9 @@
 
 // Configurações do banco de dados
 define('DB_HOST', '187.33.241.61');
-define('DB_USER', 'amopipocagourmet_consignado');
-define('DB_PASS', 'amopipocagourmet_consignado');
-define('DB_NAME', 'amopipocagourmet_consignado');
+define('DB_USER', 'amopipocagourmet_saasconsignado');
+define('DB_PASS', 'amopipocagourmet_saasconsignado');
+define('DB_NAME', 'amopipocagourmet_saasconsignado');
 define('DB_CHARSET', 'utf8mb4');
 
 /**
