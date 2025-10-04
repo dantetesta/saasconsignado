@@ -35,6 +35,10 @@ while ($row = $stmt->fetch()) {
     $consignacoesPorTipo[$row['tipo']] = $row['total'];
 }
 
+// Definir variáveis para os tipos específicos
+$consignacoesPontuais = $consignacoesPorTipo['pontual'] ?? 0;
+$consignacoesContinuas = $consignacoesPorTipo['continua'] ?? 0;
+
 // Total de consignações (do tenant)
 $stmt = $db->prepare("SELECT COUNT(*) as total FROM consignacoes WHERE tenant_id = ?");
 $stmt->execute([$tenant_id]);
@@ -121,8 +125,8 @@ include 'includes/header.php';
                 <p class="text-sm font-medium text-gray-600">Consignações Ativas</p>
                 <p class="text-3xl font-bold text-gray-900 mt-2"><?php echo $consignacoesAtivas; ?></p>
                 <div class="flex gap-2 mt-2">
-                    <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">📦 <?php echo $consignacoesPontuais; ?></span>
-                    <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">🔄 <?php echo $consignacoesContinuas; ?></span>
+                    <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">📦 Pontual: <?php echo $consignacoesPontuais; ?></span>
+                    <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">🔄 Contínua: <?php echo $consignacoesContinuas; ?></span>
                 </div>
             </div>
             <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
