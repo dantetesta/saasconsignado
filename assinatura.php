@@ -9,6 +9,7 @@
 require_once 'config/config.php';
 requireLogin();
 
+$db = Database::getInstance()->getConnection();
 $tenant = getCurrentTenant();
 $pageTitle = 'Minha Assinatura';
 
