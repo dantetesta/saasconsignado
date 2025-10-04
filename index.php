@@ -87,20 +87,21 @@ $stmt = $db->prepare("
 $stmt->execute([$tenant_id, $tenant_id]);
 $ultimasConsignacoes = $stmt->fetchAll();
 
-// Produtos com baixo estoque (menos de 20 unidades, do tenant)
+// Produtos com baixo estoque (usando estoque_minimo, do tenant)
 $stmt = $db->prepare("
     SELECT 
         p.id,
         p.nome,
         p.estoque_total,
+        p.estoque_minimo,
         COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0) as quantidade_consignada,
         (p.estoque_total - COALESCE(SUM(ci.quantidade_consignada - ci.quantidade_vendida - ci.quantidade_devolvida), 0)) as estoque_disponivel
     FROM produtos p
     LEFT JOIN consignacao_itens ci ON p.id = ci.produto_id AND ci.tenant_id = ?
     LEFT JOIN consignacoes c ON ci.consignacao_id = c.id AND c.status IN ('pendente', 'parcial') AND c.tenant_id = ?
     WHERE p.ativo = 1 AND p.tenant_id = ?
-    GROUP BY p.id, p.nome, p.estoque_total
-    HAVING estoque_disponivel < 20
+    GROUP BY p.id, p.nome, p.estoque_total, p.estoque_minimo
+    HAVING estoque_disponivel < p.estoque_minimo
     ORDER BY estoque_disponivel ASC
     LIMIT 5
 ");

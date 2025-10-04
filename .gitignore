@@ -37,9 +37,10 @@ desktop.ini
 /vendor/
 composer.lock
 
-# Uploads (se implementar upload de arquivos)
-/uploads/*
-!/uploads/.gitkeep
+# Uploads (ignorar conteúdo mas manter estrutura)
+/uploads/produtos/*
+!/uploads/produtos/.gitkeep
+/uploads/index.php
 
 # Cache
 /cache/*
