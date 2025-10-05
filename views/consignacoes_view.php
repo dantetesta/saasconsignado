@@ -101,10 +101,13 @@ if ($consignacao['tipo'] === 'continua') {
     $stmt->execute([$consignacaoId]);
     $totais = $stmt->fetch();
     
-    $total_consignado = $totais['total_entregue'] - $totais['total_devolvido']; // Saldo atual em estoque
+    $total_entregue = $totais['total_entregue'];
     $total_vendido = $totais['total_vendido'];
     $total_devolvido = $totais['total_devolvido'];
-    $total_pendente = $total_consignado; // O que ainda está no estabelecimento
+    
+    // CORREÇÃO: Total consignado = entregue - vendido - devolvido (o que ainda está no estabelecimento)
+    $total_consignado = $total_entregue - $total_vendido - $total_devolvido;
+    $total_pendente = $total_consignado; // Mesmo valor (produtos ainda no estabelecimento)
 } else {
     // Para pontuais: cálculo normal
     $total_consignado = array_sum(array_column($itens, 'quantidade_consignada'));
