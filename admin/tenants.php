@@ -60,6 +60,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $success = 'Tenant excluído com sucesso!';
                 }
                 break;
+                
+            case 'reset_password':
+                $novaSenha = $_POST['nova_senha'] ?? null;
+                if ($novaSenha && strlen($novaSenha) >= 6) {
+                    $db = Database::getInstance()->getConnection();
+                    $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
+                    $stmt = $db->prepare("UPDATE usuarios SET senha = ? WHERE tenant_id = ? LIMIT 1");
+                    if ($stmt->execute([$senhaHash, $tenantId])) {
+                        $success = "Senha resetada com sucesso! Nova senha: {$novaSenha}";
+                        
+                        // Log da ação
+                        $stmt = $db->prepare("SELECT nome_empresa FROM tenants WHERE id = ?");
+                        $stmt->execute([$tenantId]);
+                        $tenant = $stmt->fetch();
+                        
+                        $superAdmin->logAction('reset_senha', $tenantId, "Senha resetada para tenant: {$tenant['nome_empresa']}");
+                    } else {
+                        $error = 'Erro ao resetar senha';
+                    }
+                } else {
+                    $error = 'Senha deve ter no mínimo 6 caracteres';
+                }
+                break;
         }
     } catch (Exception $e) {
         $error = 'Erro: ' . $e->getMessage();
@@ -325,6 +348,17 @@ $pageTitle = 'Gestão de Assinantes';
                                             </button>
                                         <?php endif; ?>
 
+                                        <!-- Resetar Senha -->
+                                        <button 
+                                            onclick="resetPassword(<?php echo $tenant['id']; ?>, '<?php echo htmlspecialchars($tenant['nome_empresa']); ?>')"
+                                            class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                                            title="Resetar Senha"
+                                        >
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+
                                         <!-- Excluir -->
                                         <button 
                                             onclick="deleteTenant(<?php echo $tenant['id']; ?>, '<?php echo htmlspecialchars($tenant['nome_empresa']); ?>')"
@@ -401,6 +435,31 @@ $pageTitle = 'Gestão de Assinantes';
             `;
             document.body.appendChild(form);
             form.submit();
+        }
+    }
+
+    function resetPassword(id, nome) {
+        const novaSenha = prompt(`🔑 Resetar Senha\n\nTenant: ${nome}\n\nDigite a nova senha (mínimo 6 caracteres):`);
+        
+        if (novaSenha) {
+            if (novaSenha.length < 6) {
+                alert('❌ Senha deve ter no mínimo 6 caracteres!');
+                return;
+            }
+            
+            const confirmar = confirm(`✅ Confirmar reset de senha?\n\nTenant: ${nome}\nNova senha: ${novaSenha}\n\n⚠️ Esta ação será registrada nos logs.`);
+            
+            if (confirmar) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="reset_password">
+                    <input type="hidden" name="tenant_id" value="${id}">
+                    <input type="hidden" name="nova_senha" value="${novaSenha}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
         }
     }
 

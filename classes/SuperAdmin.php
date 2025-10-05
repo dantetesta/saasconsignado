@@ -278,7 +278,7 @@ class SuperAdmin {
     /**
      * Registrar log de ação administrativa
      */
-    private function logAction($acao, $tenantId = null, $descricao = null) {
+    public function logAction($acao, $tenantId = null, $descricao = null) {
         $admin = self::getCurrentAdmin();
         
         if (!$admin) return false;

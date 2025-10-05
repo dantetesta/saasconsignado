@@ -18,9 +18,94 @@ if (!SuperAdmin::isLoggedIn()) {
 
 $admin = SuperAdmin::getCurrentAdmin();
 $superAdmin = new SuperAdmin();
+$db = Database::getInstance()->getConnection();
 
-// Buscar logs
-$logs = $superAdmin->getRecentLogs(100);
+$success = '';
+$error = '';
+
+// Processar ações
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? null;
+    
+    try {
+        if ($action === 'delete_selected' && !empty($_POST['log_ids'])) {
+            $logIds = $_POST['log_ids'];
+            $placeholders = str_repeat('?,', count($logIds) - 1) . '?';
+            $stmt = $db->prepare("DELETE FROM admin_logs WHERE id IN ($placeholders)");
+            $stmt->execute($logIds);
+            $success = count($logIds) . ' log(s) deletado(s) com sucesso!';
+        }
+        
+        if ($action === 'delete_all') {
+            $stmt = $db->query("DELETE FROM admin_logs");
+            $count = $stmt->rowCount();
+            $success = "Todos os logs foram deletados! ({$count} registros)";
+        }
+        
+        if ($action === 'delete_by_date') {
+            $dataInicio = $_POST['data_inicio'] ?? null;
+            $dataFim = $_POST['data_fim'] ?? null;
+            
+            if ($dataInicio && $dataFim) {
+                $stmt = $db->prepare("DELETE FROM admin_logs WHERE DATE(criado_em) BETWEEN ? AND ?");
+                $stmt->execute([$dataInicio, $dataFim]);
+                $count = $stmt->rowCount();
+                $success = "{$count} log(s) deletado(s) no período selecionado!";
+            }
+        }
+    } catch (Exception $e) {
+        $error = 'Erro: ' . $e->getMessage();
+    }
+}
+
+// Filtros
+$filters = [
+    'data_inicio' => $_GET['data_inicio'] ?? '',
+    'data_fim' => $_GET['data_fim'] ?? '',
+    'admin_id' => $_GET['admin_id'] ?? '',
+    'acao' => $_GET['acao'] ?? ''
+];
+
+// Buscar logs com filtros
+$where = [];
+$params = [];
+
+if (!empty($filters['data_inicio'])) {
+    $where[] = "DATE(l.criado_em) >= ?";
+    $params[] = $filters['data_inicio'];
+}
+
+if (!empty($filters['data_fim'])) {
+    $where[] = "DATE(l.criado_em) <= ?";
+    $params[] = $filters['data_fim'];
+}
+
+if (!empty($filters['admin_id'])) {
+    $where[] = "l.admin_id = ?";
+    $params[] = $filters['admin_id'];
+}
+
+if (!empty($filters['acao'])) {
+    $where[] = "l.acao = ?";
+    $params[] = $filters['acao'];
+}
+
+$whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+$stmt = $db->prepare("
+    SELECT 
+        l.*,
+        a.nome as admin_nome,
+        t.nome_empresa as tenant_nome
+    FROM admin_logs l
+    JOIN super_admins a ON l.admin_id = a.id
+    LEFT JOIN tenants t ON l.tenant_id = t.id
+    {$whereClause}
+    ORDER BY l.criado_em DESC
+    LIMIT 200
+");
+$stmt->execute($params);
+$logs = $stmt->fetchAll();
 
 $pageTitle = 'Logs Administrativos';
 ?>
@@ -90,22 +175,130 @@ $pageTitle = 'Logs Administrativos';
             <p class="text-gray-600">Histórico de todas as ações realizadas no painel</p>
         </div>
 
+        <?php 
+        // Incluir sistema de notificações flutuantes
+        include 'includes/notifications.php'; 
+        ?>
+
+        <!-- Filtros e Ações -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            
+            <!-- Filtros -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="font-bold text-gray-900 mb-4">🔍 Filtrar Logs</h3>
+                <form method="GET" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
+                            <input 
+                                type="date" 
+                                name="data_inicio" 
+                                value="<?php echo htmlspecialchars($filters['data_inicio']); ?>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
+                            <input 
+                                type="date" 
+                                name="data_fim" 
+                                value="<?php echo htmlspecialchars($filters['data_fim']); ?>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            >
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                            Filtrar
+                        </button>
+                        <a href="/admin/logs.php" class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
+                            Limpar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ações em Massa -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="font-bold text-gray-900 mb-4">🗑️ Deletar Logs</h3>
+                
+                <!-- Deletar Selecionados -->
+                <button 
+                    onclick="deleteSelected()"
+                    class="w-full mb-3 px-4 py-2 bg-yellow-600 text-white font-medium rounded-lg hover:bg-yellow-700 transition"
+                >
+                    Deletar Selecionados
+                </button>
+
+                <!-- Deletar por Período -->
+                <form method="POST" onsubmit="return confirm('⚠️ Deletar logs do período selecionado?')" class="mb-3">
+                    <input type="hidden" name="action" value="delete_by_date">
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input 
+                            type="date" 
+                            name="data_inicio" 
+                            required
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            placeholder="De"
+                        >
+                        <input 
+                            type="date" 
+                            name="data_fim" 
+                            required
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            placeholder="Até"
+                        >
+                    </div>
+                    <button type="submit" class="w-full px-4 py-2 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition">
+                        Deletar por Período
+                    </button>
+                </form>
+
+                <!-- Deletar Todos -->
+                <form method="POST" onsubmit="return confirm('⚠️ ATENÇÃO!\n\nDeseja DELETAR TODOS OS LOGS?\n\nEsta ação é IRREVERSÍVEL!')">
+                    <input type="hidden" name="action" value="delete_all">
+                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                        Deletar Todos os Logs
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
         <!-- Timeline de Logs -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
+                            <th class="px-6 py-3 text-center">
+                                <input 
+                                    type="checkbox" 
+                                    id="selectAll" 
+                                    onclick="toggleSelectAll(this)"
+                                    class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                >
+                            </th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Data/Hora</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Admin</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Ação</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tenant</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Assinante</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Descrição</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php foreach ($logs as $log): ?>
                             <tr class="hover:bg-gray-50">
+                                <!-- Checkbox -->
+                                <td class="px-6 py-4 text-center">
+                                    <input 
+                                        type="checkbox" 
+                                        name="log_checkbox" 
+                                        value="<?php echo $log['id']; ?>"
+                                        class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                    >
+                                </td>
+                                
                                 <!-- Data/Hora -->
                                 <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
                                     <?php 
@@ -164,6 +357,43 @@ $pageTitle = 'Logs Administrativos';
         </div>
 
     </div>
+
+    <script>
+    // Selecionar/Desselecionar todos
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('input[name="log_checkbox"]');
+        checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    }
+
+    // Deletar logs selecionados
+    function deleteSelected() {
+        const checkboxes = document.querySelectorAll('input[name="log_checkbox"]:checked');
+        
+        if (checkboxes.length === 0) {
+            alert('⚠️ Selecione pelo menos um log para deletar!');
+            return;
+        }
+
+        if (!confirm(`⚠️ Deletar ${checkboxes.length} log(s) selecionado(s)?`)) {
+            return;
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.innerHTML = '<input type="hidden" name="action" value="delete_selected">';
+        
+        checkboxes.forEach(checkbox => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'log_ids[]';
+            input.value = checkbox.value;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    </script>
 
 </body>
 </html>
