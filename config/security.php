@@ -44,6 +44,16 @@ if (IS_PRODUCTION) {
 // HEADERS DE SEGURANÇA
 // ============================================
 
+// UTF-8 (DEVE SER O PRIMEIRO HEADER)
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+    
+    // Forçar recarregamento sem cache (temporário para corrigir encoding)
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: post-check=0, pre-check=0', false);
+    header('Pragma: no-cache');
+}
+
 // Prevenir XSS
 header("X-XSS-Protection: 1; mode=block");
 
