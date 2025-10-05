@@ -20,7 +20,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = sanitize($_POST['email'] ?? '');
     $senha = $_POST['senha'] ?? '';
     
-    if (empty($email) || empty($senha)) {
+    // Validar CSRF
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Token de segurança inválido. Recarregue a página.';
+    }
+    // Validar Turnstile (apenas produção)
+    elseif (TURNSTILE_ENABLED && !validateTurnstile($_POST['cf-turnstile-response'] ?? '')) {
+        $error = 'Verificação de segurança falhou. Tente novamente.';
+        recordAttempt('login_' . $email);
+    }
+    // Verificar rate limiting
+    elseif (!checkRateLimit('login_' . $email, 5, 900)) {
+        $error = 'Muitas tentativas de login. Aguarde 15 minutos e tente novamente.';
+    }
+    elseif (empty($email) || empty($senha)) {
         $error = 'Por favor, preencha todos os campos.';
     } else {
         try {
@@ -40,13 +53,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Definir tenant antes de fazer login
                 TenantMiddleware::setTenant($user['tenant_id']);
                 
+                // Regenerar session ID (prevenir session fixation)
+                session_regenerate_id(true);
+                
+                // Criar fingerprint da sessão
+                createSessionFingerprint();
+                
                 // Login bem-sucedido
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['nome'];
                 $_SESSION['user_email'] = $user['email'];
+                $_SESSION['login_time'] = time();
                 
                 redirect('/index.php');
             } else {
+                // Registrar tentativa falha
+                recordAttempt('login_' . $email);
                 $error = 'Email ou senha incorretos.';
             }
         } catch (PDOException $e) {
@@ -101,6 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" action="" class="space-y-6">
+                <?php echo csrfField(); ?>
+                
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
@@ -133,6 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         placeholder="••••••••"
                     >
                 </div>
+
+                <!-- Turnstile (apenas produção) -->
+                <?php echo turnstileWidget(); ?>
 
                 <!-- Botão de Login -->
                 <button 

@@ -1,0 +1,31 @@
+# ============================================
+# Proteção da Pasta Uploads
+# Bloqueia execução de PHP e scripts
+# ============================================
+
+# Bloquear execução de PHP
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Permitir apenas imagens
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Desabilitar listagem de diretórios
+Options -Indexes
+
+# Prevenir acesso a arquivos ocultos
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Headers de segurança para imagens
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>

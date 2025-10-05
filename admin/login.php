@@ -8,6 +8,7 @@
 
 session_start();
 require_once '../config/database.php';
+require_once '../config/security.php';
 require_once '../classes/SuperAdmin.php';
 
 // Se já está logado, redirecionar
@@ -22,14 +23,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $senha = $_POST['senha'] ?? '';
     
-    if (empty($email) || empty($senha)) {
+    // Validar CSRF
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Token de segurança inválido. Recarregue a página.';
+    }
+    // Validar Turnstile (apenas produção)
+    elseif (TURNSTILE_ENABLED && !validateTurnstile($_POST['cf-turnstile-response'] ?? '')) {
+        $error = 'Verificação de segurança falhou. Tente novamente.';
+        recordAttempt('admin_login_' . $email);
+    }
+    // Rate limiting
+    elseif (!checkRateLimit('admin_login_' . $email, 3, 900)) {
+        $error = 'Muitas tentativas. Aguarde 15 minutos.';
+    }
+    elseif (empty($email) || empty($senha)) {
         $error = 'Preencha todos os campos';
     } else {
         $superAdmin = new SuperAdmin();
         if ($superAdmin->authenticate($email, $senha)) {
+            // Regenerar session ID
+            session_regenerate_id(true);
+            createSessionFingerprint();
+            
             header('Location: /admin/index.php');
             exit;
         } else {
+            recordAttempt('admin_login_' . $email);
             $error = 'Email ou senha inválidos';
         }
     }
@@ -68,6 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="space-y-4">
+                <?php echo csrfField(); ?>
+                
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
@@ -99,6 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         autocomplete="current-password"
                     >
                 </div>
+
+                <!-- Turnstile (apenas produção) -->
+                <?php echo turnstileWidget(); ?>
 
                 <!-- Botão -->
                 <button 

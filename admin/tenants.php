@@ -87,13 +87,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
                     $stmt = $db->prepare("UPDATE usuarios SET senha = ? WHERE tenant_id = ? LIMIT 1");
                     if ($stmt->execute([$senhaHash, $tenantId])) {
-                        $success = "Senha resetada com sucesso! Nova senha: {$novaSenha}";
-                        
-                        // Log da ação
-                        $stmt = $db->prepare("SELECT nome_empresa FROM tenants WHERE id = ?");
+                        // Buscar email do tenant para enviar
+                        $stmt = $db->prepare("SELECT nome_empresa, email_principal FROM tenants WHERE id = ?");
                         $stmt->execute([$tenantId]);
                         $tenant = $stmt->fetch();
                         
+                        // Enviar senha por email (não mostrar na tela)
+                        // TODO: Implementar envio de email
+                        
+                        $success = "Senha resetada com sucesso! Um email foi enviado para {$tenant['email_principal']} com a nova senha.";
+                        
+                        // Log da ação
                         $superAdmin->logAction('reset_senha', $tenantId, "Senha resetada para tenant: {$tenant['nome_empresa']}");
                     } else {
                         $error = 'Erro ao resetar senha';

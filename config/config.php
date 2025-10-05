@@ -35,11 +35,8 @@ if (session_status() === PHP_SESSION_NONE) {
 // Configurações de timezone
 date_default_timezone_set('America/Sao_Paulo');
 
-// Configurações de erro
-error_reporting(E_ALL);
-ini_set('display_errors', 1); // Habilitado temporariamente para debug
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../logs/sistema.log');
+// Carregar configurações de segurança (CSRF, Rate Limiting, Headers)
+require_once __DIR__ . '/security.php';
 
 // Configurações do sistema
 define('SITE_NAME', 'Sistema de Consignados');
