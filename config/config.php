@@ -31,10 +31,23 @@ try {
 mb_internal_encoding('UTF-8');
 mb_http_output('UTF-8');
 
-// Iniciar sessão se ainda não iniciada
+// Configurar sessão ANTES de iniciar
 if (session_status() === PHP_SESSION_NONE) {
-    // Configurar sessão com UTF-8
+    // Configurações de segurança da sessão
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_samesite', 'Strict');
+    ini_set('session.use_strict_mode', 1);
+    ini_set('session.gc_maxlifetime', 1800); // 30 minutos
     ini_set('default_charset', 'UTF-8');
+    
+    // HTTPS em produção
+    $isProduction = !in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1']) && 
+                    strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') !== 0;
+    if ($isProduction) {
+        ini_set('session.cookie_secure', 1);
+    }
+    
+    // Iniciar sessão
     session_start();
 }
 

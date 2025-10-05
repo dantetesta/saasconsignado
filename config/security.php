@@ -26,23 +26,10 @@ define('TURNSTILE_SITE_KEY', '0x4AAAAAAB46BTyXNMqGjT81');
 define('TURNSTILE_SECRET_KEY', '0x4AAAAAAB46BRmKxNjsji2mSoclu37mcaw');
 
 // ============================================
-// CONFIGURAÇÕES DE SESSÃO SEGURA
-// ============================================
-
-// Configurar sessão segura
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.use_strict_mode', 1);
-ini_set('session.gc_maxlifetime', 1800); // 30 minutos
-
-// HTTPS em produção
-if (IS_PRODUCTION) {
-    ini_set('session.cookie_secure', 1);
-}
-
-// ============================================
 // HEADERS DE SEGURANÇA
 // ============================================
+// Nota: Configurações de sessão foram movidas para config.php
+// (devem ser definidas ANTES de session_start())
 
 // UTF-8 (DEVE SER O PRIMEIRO HEADER)
 if (!headers_sent()) {
