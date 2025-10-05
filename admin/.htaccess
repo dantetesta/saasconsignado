@@ -1,0 +1,16 @@
+# Proteção da área administrativa
+# Autor: Dante Testa (https://dantetesta.com.br)
+
+# Permitir acesso apenas aos arquivos PHP
+<FilesMatch "\.(php)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Bloquear acesso direto a outros arquivos
+<FilesMatch "\.(txt|log|sql|json)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Redirecionar para login se não autenticado (será tratado pelo PHP)
