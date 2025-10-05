@@ -84,7 +84,7 @@ $pageTitle = 'Gateways de Pagamento';
                     📊 Dashboard
                 </a>
                 <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
-                    👥 Tenants
+                    👥 Assinantes
                 </a>
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     💰 Financeiro

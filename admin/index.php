@@ -64,7 +64,7 @@ $pageTitle = 'Dashboard Admin';
                     📊 Dashboard
                 </a>
                 <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
-                    👥 Tenants
+                    👥 Assinantes
                 </a>
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     💰 Financeiro
@@ -85,10 +85,10 @@ $pageTitle = 'Dashboard Admin';
         <!-- Métricas Principais -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             
-            <!-- Total de Tenants -->
+            <!-- Total de Assinantes -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-sm font-medium text-gray-600">Total de Tenants</h3>
+                    <h3 class="text-sm font-medium text-gray-600">Total de Assinantes</h3>
                     <svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                     </svg>
@@ -154,7 +154,7 @@ $pageTitle = 'Dashboard Admin';
                 </div>
             </div>
 
-            <!-- Tenants Ativos -->
+            <!-- Assinantes Ativos -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -196,7 +196,7 @@ $pageTitle = 'Dashboard Admin';
                         </svg>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900">Gerenciar Tenants</p>
+                        <p class="font-semibold text-gray-900">Gerenciar Assinantes</p>
                         <p class="text-xs text-gray-500">Ver todos os clientes</p>
                     </div>
                 </div>
@@ -247,12 +247,12 @@ $pageTitle = 'Dashboard Admin';
 
         </div>
 
-        <!-- Status dos Tenants -->
+        <!-- Status dos Assinantes -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <!-- Distribuição por Status -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Status dos Tenants</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Status dos Assinantes</h3>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">

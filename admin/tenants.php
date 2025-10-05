@@ -1,6 +1,6 @@
 <?php
 /**
- * Gestão de Tenants
+ * Gestão de Assinantes
  * 
  * @author Dante Testa <https://dantetesta.com.br>
  * @version 2.0.0
@@ -75,7 +75,7 @@ $filters = [
 
 $tenants = $superAdmin->listTenants($filters);
 
-$pageTitle = 'Gestão de Tenants';
+$pageTitle = 'Gestão de Assinantes';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -119,7 +119,7 @@ $pageTitle = 'Gestão de Tenants';
                     📊 Dashboard
                 </a>
                 <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
-                    👥 Tenants
+                    👥 Assinantes
                 </a>
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     💰 Financeiro
@@ -139,7 +139,7 @@ $pageTitle = 'Gestão de Tenants';
         
         <!-- Header -->
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestão de Tenants</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestão de Assinantes</h1>
             <p class="text-gray-600">Gerencie todos os clientes da plataforma</p>
         </div>
 
@@ -184,7 +184,7 @@ $pageTitle = 'Gestão de Tenants';
             </form>
         </div>
 
-        <!-- Listagem de Tenants -->
+        <!-- Listagem de Assinantes -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
