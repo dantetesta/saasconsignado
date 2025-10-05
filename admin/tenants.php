@@ -378,6 +378,17 @@ $pageTitle = 'Gestão de Assinantes';
                                             </svg>
                                         </button>
 
+                                        <!-- Enviar Notificação -->
+                                        <button 
+                                            onclick="sendNotification(<?php echo $tenant['id']; ?>, '<?php echo htmlspecialchars($tenant['nome_empresa']); ?>')"
+                                            class="p-2 text-cyan-600 hover:bg-cyan-50 rounded-lg transition"
+                                            title="Enviar Notificação"
+                                        >
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                                            </svg>
+                                        </button>
+
                                         <!-- Excluir -->
                                         <button 
                                             onclick="deleteTenant(<?php echo $tenant['id']; ?>, '<?php echo htmlspecialchars($tenant['nome_empresa']); ?>')"
@@ -455,6 +466,93 @@ $pageTitle = 'Gestão de Assinantes';
             document.body.appendChild(form);
             form.submit();
         }
+    }
+
+    function sendNotification(id, nome) {
+        // Criar modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">📨 Enviar Notificação</h3>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <p class="text-sm text-gray-600 mb-4">Para: <strong>${nome}</strong></p>
+                
+                <form method="POST" class="space-y-4">
+                    <input type="hidden" name="action" value="send_notification">
+                    <input type="hidden" name="tenant_id" value="${id}">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                        <input 
+                            type="text" 
+                            name="titulo" 
+                            required
+                            placeholder="Ex: Atualização Importante"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+                        <textarea 
+                            name="mensagem" 
+                            required
+                            rows="4"
+                            placeholder="Digite sua mensagem aqui..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+                        ></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                        <select name="tipo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500">
+                            <option value="info">ℹ️ Informação</option>
+                            <option value="success">✅ Sucesso</option>
+                            <option value="warning">⚠️ Aviso</option>
+                            <option value="error">❌ Erro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                        <input 
+                            type="checkbox" 
+                            name="enviar_email" 
+                            id="enviar_email"
+                            class="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
+                        >
+                        <label for="enviar_email" class="text-sm text-gray-700">
+                            📧 Enviar também por email
+                        </label>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
+                        <button 
+                            type="button"
+                            onclick="this.closest('.fixed').remove()"
+                            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition"
+                        >
+                            Cancelar
+                        </button>
+                        <button 
+                            type="submit"
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-medium rounded-lg hover:from-cyan-700 hover:to-blue-700 transition"
+                        >
+                            Enviar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
     }
 
     function resetPassword(id, nome) {
