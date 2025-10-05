@@ -91,7 +91,28 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                     <?php 
                     $plan_info = getPlanInfo();
                     $is_free = $plan_info && $plan_info['plano'] === 'free';
+                    
+                    // Contar notificações não lidas
+                    require_once __DIR__ . '/../classes/Notification.php';
+                    $notification = new Notification();
+                    $unreadCount = $notification->countUnread($_SESSION['tenant_id']);
                     ?>
+                    
+                    <!-- Notificações -->
+                    <button 
+                        onclick="openNotifications()"
+                        class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                        title="Notificações"
+                    >
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                        </svg>
+                        <?php if ($unreadCount > 0): ?>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                                <?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?>
+                            </span>
+                        <?php endif; ?>
+                    </button>
                     
                     <!-- Badge do Plano (Desktop) -->
                     <?php if ($is_free): ?>
@@ -258,6 +279,163 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     }
     </script>
     <?php endif; ?>
+
+    <!-- Modal de Notificações -->
+    <div id="notificationsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                        </svg>
+                        <h3 class="text-xl font-bold">Notificações</h3>
+                    </div>
+                    <button onclick="closeNotifications()" class="hover:bg-white hover:bg-opacity-20 rounded-lg p-1 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de Notificações -->
+            <div id="notificationsList" class="overflow-y-auto max-h-[calc(80vh-120px)] p-6">
+                <div class="text-center py-8">
+                    <div class="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto"></div>
+                    <p class="text-gray-500 mt-3">Carregando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Abrir modal de notificações
+    function openNotifications() {
+        document.getElementById('notificationsModal').classList.remove('hidden');
+        loadNotifications();
+    }
+
+    // Fechar modal
+    function closeNotifications() {
+        document.getElementById('notificationsModal').classList.add('hidden');
+    }
+
+    // Carregar notificações via AJAX
+    function loadNotifications() {
+        fetch('/api/get_notifications.php')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('notificationsList');
+                
+                if (data.notifications && data.notifications.length > 0) {
+                    container.innerHTML = data.notifications.map(notif => {
+                        const tipoColors = {
+                            'info': 'bg-blue-50 border-blue-200 text-blue-900',
+                            'success': 'bg-green-50 border-green-200 text-green-900',
+                            'warning': 'bg-yellow-50 border-yellow-200 text-yellow-900',
+                            'error': 'bg-red-50 border-red-200 text-red-900',
+                            'email': 'bg-purple-50 border-purple-200 text-purple-900'
+                        };
+                        
+                        const tipoIcons = {
+                            'info': 'ℹ️',
+                            'success': '✅',
+                            'warning': '⚠️',
+                            'error': '❌',
+                            'email': '📧'
+                        };
+                        
+                        const color = tipoColors[notif.tipo] || tipoColors['info'];
+                        const icon = tipoIcons[notif.tipo] || tipoIcons['info'];
+                        const lida = notif.lida == 1;
+                        
+                        return `
+                            <div class="mb-3 p-4 border ${color} rounded-lg ${lida ? 'opacity-60' : ''}" data-notif-id="${notif.id}">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xl">${icon}</span>
+                                        <h4 class="font-bold">${notif.titulo}</h4>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        ${!lida ? '<span class="bg-red-500 w-2 h-2 rounded-full"></span>' : ''}
+                                        <button onclick="markAsRead(${notif.id})" class="text-gray-400 hover:text-gray-600" title="Marcar como lida">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-sm mb-2">${notif.mensagem}</p>
+                                <p class="text-xs opacity-75">${notif.data_formatada}</p>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Botão marcar todas como lidas
+                    if (data.unread_count > 0) {
+                        container.innerHTML += `
+                            <button 
+                                onclick="markAllAsRead()"
+                                class="w-full mt-4 px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition"
+                            >
+                                Marcar todas como lidas
+                            </button>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <p class="text-gray-500">Nenhuma notificação</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar notificações:', error);
+                document.getElementById('notificationsList').innerHTML = `
+                    <div class="text-center py-12 text-red-600">
+                        <p>Erro ao carregar notificações</p>
+                    </div>
+                `;
+            });
+    }
+
+    // Marcar como lida
+    function markAsRead(notifId) {
+        fetch('/api/mark_notification_read.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({notification_id: notifId})
+        })
+        .then(() => {
+            loadNotifications();
+            location.reload(); // Atualizar badge
+        });
+    }
+
+    // Marcar todas como lidas
+    function markAllAsRead() {
+        fetch('/api/mark_all_notifications_read.php', {
+            method: 'POST'
+        })
+        .then(() => {
+            loadNotifications();
+            location.reload(); // Atualizar badge
+        });
+    }
+
+    // Fechar ao clicar fora
+    document.getElementById('notificationsModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeNotifications();
+        }
+    });
+    </script>
 
     <!-- Main Content -->
     <main class="w-[90%] mx-auto py-8">
