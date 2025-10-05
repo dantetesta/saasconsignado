@@ -29,9 +29,4 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   FOREIGN KEY (`admin_id`) REFERENCES `super_admins`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Notificações do sistema';
 
--- ============================================
--- ÍNDICES PARA PERFORMANCE
--- ============================================
-
-ALTER TABLE `notifications` ADD INDEX `idx_tenant_lida` (`tenant_id`, `lida`);
-ALTER TABLE `notifications` ADD INDEX `idx_tenant_criado` (`tenant_id`, `criado_em`);
+-- Índices já criados na definição da tabela acima

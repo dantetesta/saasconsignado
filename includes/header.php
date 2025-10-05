@@ -352,7 +352,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         const lida = notif.lida == 1;
                         
                         return `
-                            <div class="mb-3 p-4 border ${color} rounded-lg ${lida ? 'opacity-60' : ''}" data-notif-id="${notif.id}">
+                            <div class="mb-3 p-4 border ${color} rounded-lg ${lida ? 'opacity-60' : ''} transition-all duration-300" data-notif-id="${notif.id}">
                                 <div class="flex items-start justify-between mb-2">
                                     <div class="flex items-center gap-2">
                                         <span class="text-xl">${icon}</span>
@@ -360,9 +360,16 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                                     </div>
                                     <div class="flex items-center gap-2">
                                         ${!lida ? '<span class="bg-red-500 w-2 h-2 rounded-full"></span>' : ''}
-                                        <button onclick="markAsRead(${notif.id})" class="text-gray-400 hover:text-gray-600" title="Marcar como lida">
+                                        ${!lida ? `
+                                            <button onclick="markAsRead(${notif.id})" class="text-gray-400 hover:text-green-600" title="Marcar como lida">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                            </button>
+                                        ` : ''}
+                                        <button onclick="deleteNotification(${notif.id})" class="text-gray-400 hover:text-red-600" title="Deletar">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                             </svg>
                                         </button>
                                     </div>
@@ -405,16 +412,53 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
             });
     }
 
-    // Marcar como lida
+    // Marcar como lida (sem fechar modal)
     function markAsRead(notifId) {
         fetch('/api/mark_notification_read.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({notification_id: notifId})
         })
-        .then(() => {
-            loadNotifications();
-            location.reload(); // Atualizar badge
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Atualizar visualmente sem recarregar
+                const notifElement = document.querySelector(`[data-notif-id="${notifId}"]`);
+                if (notifElement) {
+                    notifElement.classList.add('opacity-60');
+                    const badge = notifElement.querySelector('.bg-red-500');
+                    if (badge) badge.remove();
+                }
+                
+                // Atualizar badge do header
+                updateBadgeCount();
+            }
+        });
+    }
+
+    // Deletar notificação
+    function deleteNotification(notifId) {
+        if (!confirm('Deletar esta notificação?')) return;
+        
+        fetch('/api/delete_notification.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({notification_id: notifId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remover elemento com animação
+                const notifElement = document.querySelector(`[data-notif-id="${notifId}"]`);
+                if (notifElement) {
+                    notifElement.style.opacity = '0';
+                    notifElement.style.transform = 'translateX(100%)';
+                    setTimeout(() => notifElement.remove(), 300);
+                }
+                
+                // Atualizar badge
+                updateBadgeCount();
+            }
         });
     }
 
@@ -423,10 +467,29 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         fetch('/api/mark_all_notifications_read.php', {
             method: 'POST'
         })
-        .then(() => {
-            loadNotifications();
-            location.reload(); // Atualizar badge
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadNotifications();
+                updateBadgeCount();
+            }
         });
+    }
+
+    // Atualizar contador do badge
+    function updateBadgeCount() {
+        fetch('/api/get_notifications.php')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('.animate-pulse');
+                if (data.unread_count > 0) {
+                    if (badge) {
+                        badge.textContent = data.unread_count > 9 ? '9+' : data.unread_count;
+                    }
+                } else {
+                    if (badge) badge.remove();
+                }
+            });
     }
 
     // Fechar ao clicar fora
