@@ -10,18 +10,17 @@
 -- TABELA: SUPER_ADMINS (Donos do SaaS)
 -- ============================================
 
-DROP TABLE IF EXISTS `super_admins`;
-CREATE TABLE `super_admins` (
+CREATE TABLE IF NOT EXISTS `super_admins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL UNIQUE,
+  `email` varchar(100) NOT NULL,
   `senha` varchar(255) NOT NULL,
   `ativo` tinyint(1) DEFAULT 1,
   `ultimo_acesso` timestamp NULL DEFAULT NULL,
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp(),
   `atualizado_em` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `email_unique` (`email`),
   KEY `idx_ativo` (`ativo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Super administradores do SaaS';
 
@@ -29,8 +28,7 @@ CREATE TABLE `super_admins` (
 -- TABELA: ADMIN_LOGS (Logs de ações admin)
 -- ============================================
 
-DROP TABLE IF EXISTS `admin_logs`;
-CREATE TABLE `admin_logs` (
+CREATE TABLE IF NOT EXISTS `admin_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `admin_id` int(11) NOT NULL,
   `tenant_id` int(11) DEFAULT NULL,
@@ -54,8 +52,7 @@ CREATE TABLE `admin_logs` (
 -- TABELA: PAYMENT_GATEWAYS (Gateways de Pagamento)
 -- ============================================
 
-DROP TABLE IF EXISTS `payment_gateways`;
-CREATE TABLE `payment_gateways` (
+CREATE TABLE IF NOT EXISTS `payment_gateways` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `slug` varchar(50) NOT NULL UNIQUE,
