@@ -343,13 +343,24 @@ include 'includes/header.php';
                             Escolher Imagem
                         </label>
                         
-                        <div class="mt-3 p-3 bg-blue-50 rounded-lg">
-                            <p class="text-xs text-blue-800">
-                                <strong>📐 Formato:</strong> Quadrado 1:1<br>
-                                <strong>📏 Tamanho:</strong> 500x500px<br>
-                                <strong>📁 Tipos:</strong> JPEG, PNG, WEBP, GIF<br>
-                                <strong>💾 Máximo:</strong> 5MB
-                            </p>
+                        <div class="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
+                            <span>Máx: 5MB</span>
+                            <button type="button" onclick="toggleImageInfo()" class="inline-flex items-center justify-center w-5 h-5 bg-gray-200 hover:bg-gray-300 rounded-full transition">
+                                <svg class="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Tooltip de informações -->
+                        <div id="imageInfoTooltip" class="hidden mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-gray-700">
+                            <p class="font-semibold text-blue-900 mb-2">💡 Dicas para melhor resultado:</p>
+                            <ul class="space-y-1">
+                                <li>• Envie imagens em alta qualidade</li>
+                                <li>• Formatos aceitos: JPEG, PNG, WEBP, GIF</li>
+                                <li>• Você poderá ajustar o crop em 1:1</li>
+                                <li>• Imagem final será 500x500px</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -738,6 +749,12 @@ function applyCrop() {
         // Fechar modal
         closeCropModal();
     }, 'image/jpeg', 0.85);
+}
+
+// Toggle tooltip de informações da imagem
+function toggleImageInfo() {
+    const tooltip = document.getElementById('imageInfoTooltip');
+    tooltip.classList.toggle('hidden');
 }
 
 function confirmDelete(id, nome) {
