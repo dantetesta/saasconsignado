@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upgrade'])) {
 include 'includes/header.php';
 ?>
 
-<div class="max-w-6xl mx-auto">
+<div class="max-w-4xl mx-auto px-4">
     
-    <!-- Header -->
-    <div class="mb-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Upgrade para o Plano Pro</h1>
-        <p class="text-gray-600">Desbloqueie todos os recursos e cresça sem limites</p>
+    <!-- Header Compacto -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Faça Upgrade para o Pro</h1>
+        <p class="text-gray-600">Apenas R$ 20/mês • Cancele quando quiser</p>
     </div>
 
     <?php if ($error): ?>
@@ -154,145 +154,95 @@ include 'includes/header.php';
             </div>
         </div>
     <?php else: ?>
-        <!-- Comparação de Planos -->
-        <div class="grid md:grid-cols-2 gap-8 mb-8">
-            
-            <!-- Plano Free -->
-            <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-                <div class="text-center mb-6">
-                    <h3 class="text-2xl font-bold text-gray-700 mb-2">Plano Free</h3>
-                    <div class="text-4xl font-bold text-gray-900 mb-1">
-                        R$ 0
-                        <span class="text-lg font-normal text-gray-600">/mês</span>
-                    </div>
-                    <p class="text-sm text-gray-500">Seu plano atual</p>
-                </div>
-                
-                <ul class="space-y-3 mb-6">
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-gray-600">Até 5 estabelecimentos</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-gray-600">5 consignações por estabelecimento</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-gray-600">Controle de produtos</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-gray-600">Relatórios básicos</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-gray-600">Suporte por email</span>
-                    </li>
-                </ul>
-            </div>
+        <!-- Tabela de Comparação Compacta -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Recursos</th>
+                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">Free<br><span class="text-xs font-normal">(Atual)</span></th>
+                        <th class="px-6 py-4 text-center text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white">Pro<br><span class="text-xs font-normal">R$ 20/mês</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr>
+                        <td class="px-6 py-3 text-sm text-gray-900">Estabelecimentos</td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-600">5</td>
+                        <td class="px-6 py-3 text-center text-sm font-semibold text-purple-600">Ilimitado</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="px-6 py-3 text-sm text-gray-900">Consignações</td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-600">5 por estabelecimento</td>
+                        <td class="px-6 py-3 text-center text-sm font-semibold text-purple-600">Ilimitado</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-sm text-gray-900">Emails personalizados</td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-400">✗</td>
+                        <td class="px-6 py-3 text-center text-sm text-green-600">✓</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="px-6 py-3 text-sm text-gray-900">Relatórios avançados</td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-400">✗</td>
+                        <td class="px-6 py-3 text-center text-sm text-green-600">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3 text-sm text-gray-900">Suporte</td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-600">Email</td>
+                        <td class="px-6 py-3 text-center text-sm font-semibold text-purple-600">Prioritário</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-            <!-- Plano Pro -->
-            <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl shadow-xl p-8 text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-yellow-400 text-purple-900 px-4 py-1 text-sm font-bold rounded-bl-lg">
-                    RECOMENDADO
-                </div>
+        <!-- Card de Upgrade -->
+        <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl shadow-xl p-8 text-white">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">Faça Upgrade Agora</h2>
                 
-                <div class="text-center mb-6">
-                    <h3 class="text-2xl font-bold mb-2">Plano Pro</h3>
-                    <div class="text-5xl font-bold mb-1">
-                        R$ 20
-                        <span class="text-lg font-normal">/mês</span>
-                    </div>
-                    <p class="text-purple-100">Sem limites!</p>
-                </div>
-                
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span><strong>Estabelecimentos ilimitados</strong></span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span><strong>Consignações ilimitadas</strong></span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span><strong>Emails personalizados</strong> com sua marca</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span><strong>Relatórios avançados</strong></span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span><strong>Suporte prioritário</strong></span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>Todas as funcionalidades</span>
-                    </li>
-                </ul>
-
-                <form method="POST" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-3">Forma de Pagamento:</label>
-                        <div class="space-y-2">
-                            <label class="flex items-center bg-white bg-opacity-20 p-3 rounded-lg cursor-pointer hover:bg-opacity-30 transition">
-                                <input type="radio" name="forma_pagamento" value="pix" checked class="mr-3">
-                                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                                </svg>
-                                <span class="font-medium">PIX</span>
-                                <span class="ml-auto text-xs bg-green-400 text-green-900 px-2 py-1 rounded">Instantâneo</span>
-                            </label>
-                            <label class="flex items-center bg-white bg-opacity-20 p-3 rounded-lg cursor-pointer hover:bg-opacity-30 transition">
-                                <input type="radio" name="forma_pagamento" value="boleto" class="mr-3">
-                                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M3 3h2v18H3zm4 0h2v18H7zm4 0h2v18h-2zm4 0h2v18h-2zm4 0h2v18h-2z"/>
-                                </svg>
-                                <span class="font-medium">Boleto</span>
-                                <span class="ml-auto text-xs bg-blue-400 text-blue-900 px-2 py-1 rounded">2 dias úteis</span>
-                            </label>
-                        </div>
+                <form method="POST" class="space-y-6">
+                    <!-- Formas de Pagamento -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <label class="flex items-center bg-white bg-opacity-20 p-4 rounded-lg cursor-pointer hover:bg-opacity-30 transition border-2 border-transparent hover:border-white">
+                            <input type="radio" name="forma_pagamento" value="pix" checked class="w-5 h-5 mr-3">
+                            <div class="flex-1">
+                                <div class="font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                                    </svg>
+                                    PIX
+                                </div>
+                                <div class="text-xs opacity-90 mt-1">Aprovação instantânea</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center bg-white bg-opacity-20 p-4 rounded-lg cursor-pointer hover:bg-opacity-30 transition border-2 border-transparent hover:border-white">
+                            <input type="radio" name="forma_pagamento" value="boleto" class="w-5 h-5 mr-3">
+                            <div class="flex-1">
+                                <div class="font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M3 3h2v18H3zm4 0h2v18H7zm4 0h2v18h-2zm4 0h2v18h-2zm4 0h2v18h-2z"/>
+                                    </svg>
+                                    Boleto
+                                </div>
+                                <div class="text-xs opacity-90 mt-1">Compensação em 2 dias</div>
+                            </div>
+                        </label>
                     </div>
 
+                    <!-- Botão de Upgrade -->
                     <button 
                         type="submit" 
                         name="upgrade"
-                        class="w-full bg-white text-purple-600 font-bold py-4 px-6 rounded-lg hover:bg-purple-50 transition transform hover:scale-105 shadow-lg"
+                        class="w-full bg-white text-purple-600 font-bold py-4 px-6 rounded-lg hover:bg-purple-50 transition transform hover:scale-105 shadow-xl"
                     >
-                        Fazer Upgrade Agora
+                        Confirmar Upgrade • R$ 20/mês
                     </button>
+
+                    <p class="text-center text-sm opacity-90">
+                        🔒 Pagamento seguro • Cancele quando quiser • Garantia de 7 dias
+                    </p>
                 </form>
-
-                <p class="text-center text-sm mt-4 text-purple-100">
-                    🔒 Pagamento seguro • Cancele quando quiser
-                </p>
             </div>
-
         </div>
 
         <!-- Garantia -->
