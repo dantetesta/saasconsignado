@@ -27,6 +27,11 @@ try {
 // DEBUG: Log do BASE_PATH detectado (comentado para produção)
 // error_log("BASE_PATH detectado: " . BASE_PATH);
 
+// Forçar UTF-8 em todo o sistema
+mb_internal_encoding('UTF-8');
+mb_http_output('UTF-8');
+header('Content-Type: text/html; charset=utf-8');
+
 // Iniciar sessão se ainda não iniciada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

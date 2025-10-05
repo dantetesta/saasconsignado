@@ -6,6 +6,10 @@
  * @version 2.0.0
  */
 
+// Forçar UTF-8
+header('Content-Type: text/html; charset=utf-8');
+mb_internal_encoding('UTF-8');
+
 require_once 'config/config.php';
 requireLogin();
 
