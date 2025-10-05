@@ -11,8 +11,11 @@
 // ============================================
 
 // Detectar ambiente (local vs produção)
-$isLocal = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1']) || 
-           strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') === 0;
+$httpHost = $_SERVER['HTTP_HOST'] ?? '';
+$isLocal = empty($httpHost) || // CLI ou sem host
+           in_array($httpHost, ['localhost', '127.0.0.1']) || 
+           strpos($httpHost, '127.0.0.1:') === 0 ||
+           strpos($httpHost, 'localhost:') === 0;
 
 define('IS_LOCAL', $isLocal);
 define('IS_PRODUCTION', !$isLocal);
@@ -192,8 +195,9 @@ function validateTurnstile($token) {
  * HTML do Turnstile (apenas produção)
  */
 function turnstileWidget() {
-    if (!TURNSTILE_ENABLED) {
-        return ''; // Não mostrar em local
+    // IMPORTANTE: Não mostrar em ambiente local
+    if (!defined('TURNSTILE_ENABLED') || !TURNSTILE_ENABLED) {
+        return '<!-- Turnstile desabilitado em ambiente local -->';
     }
     
     return '
