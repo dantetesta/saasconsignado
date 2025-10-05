@@ -54,10 +54,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $success = "Vencimento estendido em {$dias} dias!";
                 }
                 break;
-                
             case 'delete':
                 if ($superAdmin->deleteTenant($tenantId)) {
                     $success = 'Tenant excluído com sucesso!';
+                }
+                break;
+            case 'send_notification':
+                require_once '../classes/Notification.php';
+                $notification = new Notification();
+                
+                $titulo = $_POST['titulo'] ?? null;
+                $mensagem = $_POST['mensagem'] ?? null;
+                $tipo = $_POST['tipo'] ?? 'info';
+                $enviarEmail = isset($_POST['enviar_email']);
+                
+                if ($titulo && $mensagem) {
+                    if ($notification->create($tenantId, $titulo, $mensagem, $tipo, $enviarEmail, $admin['id'])) {
+                        $metodo = $enviarEmail ? 'email e notificação' : 'notificação';
+                        $success = "Notificação enviada com sucesso via {$metodo}!";
+                    } else {
+                        $error = 'Erro ao enviar notificação';
+                    }
+                } else {
+                    $error = 'Título e mensagem são obrigatórios';
                 }
                 break;
                 
