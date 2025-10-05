@@ -48,9 +48,12 @@ class Notification {
     public function getByTenant($tenantId, $limit = 20, $apenasNaoLidas = false) {
         $where = $apenasNaoLidas ? 'AND lida = 0' : '';
         
+        // Não mostrar notificações tipo "email" (são apenas registros internos)
         $stmt = $this->db->prepare("
             SELECT * FROM notifications
-            WHERE tenant_id = ? {$where}
+            WHERE tenant_id = ? 
+            AND tipo != 'email'
+            {$where}
             ORDER BY criado_em DESC
             LIMIT ?
         ");
@@ -66,7 +69,9 @@ class Notification {
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as total
             FROM notifications
-            WHERE tenant_id = ? AND lida = 0
+            WHERE tenant_id = ? 
+            AND lida = 0
+            AND tipo != 'email'
         ");
         
         $stmt->execute([$tenantId]);
@@ -108,29 +113,62 @@ class Notification {
     }
     
     /**
-     * Enviar email (integração futura)
+     * Enviar email via SMTP
      */
     private function sendEmail($tenantId, $titulo, $mensagem) {
         // Buscar email do tenant
-        $stmt = $this->db->prepare("SELECT email_principal FROM tenants WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT email_principal, nome_empresa FROM tenants WHERE id = ?");
         $stmt->execute([$tenantId]);
         $tenant = $stmt->fetch();
         
-        if ($tenant) {
-            // TODO: Integrar com sistema de email (Postmark, etc)
-            // Por enquanto apenas registra que foi enviado
+        if (!$tenant) return false;
+        
+        try {
+            // Configurar PHPMailer ou usar sistema existente
+            require_once __DIR__ . '/../vendor/autoload.php';
             
-            // Criar notificação de que email foi enviado
-            $stmt = $this->db->prepare("
-                INSERT INTO notifications (tenant_id, tipo, titulo, mensagem, enviado_por_email)
-                VALUES (?, 'email', ?, ?, 1)
-            ");
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             
-            $stmt->execute([
-                $tenantId,
-                '📧 Email Enviado',
-                'Você recebeu um email importante. Verifique sua caixa de entrada: ' . $tenant['email_principal']
-            ]);
+            // Configurações SMTP (usar as mesmas de enviar_email.php)
+            $mail->isSMTP();
+            $mail->Host = 'smtp.hostinger.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'contato@dantetesta.com.br';
+            $mail->Password = ''; // Usar senha do config
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->CharSet = 'UTF-8';
+            
+            // Remetente e destinatário
+            $mail->setFrom('contato@dantetesta.com.br', 'Sistema Consignados');
+            $mail->addAddress($tenant['email_principal'], $tenant['nome_empresa']);
+            
+            // Conteúdo
+            $mail->isHTML(true);
+            $mail->Subject = $titulo;
+            $mail->Body = "
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;'>
+                        <h1 style='color: white; margin: 0;'>🔔 {$titulo}</h1>
+                    </div>
+                    <div style='background: white; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;'>
+                        <p style='color: #374151; font-size: 16px; line-height: 1.6;'>{$mensagem}</p>
+                        <hr style='margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;'>
+                        <p style='color: #6b7280; font-size: 14px;'>
+                            Esta é uma mensagem automática do sistema.<br>
+                            Para acessar o sistema, <a href='https://seu-dominio.com' style='color: #667eea;'>clique aqui</a>.
+                        </p>
+                    </div>
+                </div>
+            ";
+            
+            $mail->send();
+            return true;
+            
+        } catch (Exception $e) {
+            // Se falhar, apenas registra erro mas não bloqueia a notificação
+            error_log("Erro ao enviar email: " . $e->getMessage());
+            return false;
         }
     }
 }
