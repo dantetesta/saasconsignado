@@ -108,17 +108,10 @@ $pageTitle = 'Gateways de Pagamento';
             <p class="text-gray-600">Configure os gateways que serão utilizados para cobranças das assinaturas</p>
         </div>
 
-        <?php if ($success): ?>
-            <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p class="text-green-700"><?php echo htmlspecialchars($success); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                <p class="text-red-700"><?php echo htmlspecialchars($error); ?></p>
-            </div>
-        <?php endif; ?>
+        <?php 
+        // Incluir sistema de notificações flutuantes
+        include 'includes/notifications.php'; 
+        ?>
 
         <!-- Aviso -->
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">

@@ -143,17 +143,10 @@ $pageTitle = 'Gestão de Tenants';
             <p class="text-gray-600">Gerencie todos os clientes da plataforma</p>
         </div>
 
-        <?php if ($success): ?>
-            <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p class="text-green-700"><?php echo htmlspecialchars($success); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                <p class="text-red-700"><?php echo htmlspecialchars($error); ?></p>
-            </div>
-        <?php endif; ?>
+        <?php 
+        // Incluir sistema de notificações flutuantes
+        include 'includes/notifications.php'; 
+        ?>
 
         <!-- Filtros -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
