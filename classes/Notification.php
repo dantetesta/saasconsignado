@@ -124,23 +124,24 @@ class Notification {
         if (!$tenant) return false;
         
         try {
-            // Configurar PHPMailer ou usar sistema existente
+            // Carregar configurações de email
+            require_once __DIR__ . '/../config/email.php';
             require_once __DIR__ . '/../vendor/autoload.php';
             
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             
-            // Configurações SMTP (usar as mesmas de enviar_email.php)
+            // Configurações SMTP do config/email.php
             $mail->isSMTP();
-            $mail->Host = 'smtp.hostinger.com';
+            $mail->Host = SMTP_HOST;
             $mail->SMTPAuth = true;
-            $mail->Username = 'contato@dantetesta.com.br';
-            $mail->Password = ''; // Usar senha do config
-            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $mail->Username = SMTP_USERNAME;
+            $mail->Password = SMTP_PASSWORD;
+            $mail->SMTPSecure = SMTP_SECURE;
+            $mail->Port = SMTP_PORT;
             $mail->CharSet = 'UTF-8';
             
             // Remetente e destinatário
-            $mail->setFrom('contato@dantetesta.com.br', 'Sistema Consignados');
+            $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
             $mail->addAddress($tenant['email_principal'], $tenant['nome_empresa']);
             
             // Conteúdo
