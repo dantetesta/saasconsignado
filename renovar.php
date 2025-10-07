@@ -38,17 +38,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['renovar'])) {
         
         $pagouAPI = new PagouAPI();
         
-        // Buscar dados do tenant
-        $stmt = $db->prepare("SELECT nome_empresa, documento, email_principal FROM tenants WHERE id = ?");
-        $stmt->execute([$tenant['id']]);
+        // Buscar dados do usuário (documento está em usuarios, não em tenants)
+        $stmt = $db->prepare("
+            SELECT u.nome_empresa, u.documento, u.email 
+            FROM usuarios u 
+            WHERE u.id = ? AND u.tenant_id = ?
+        ");
+        $stmt->execute([$_SESSION['user_id'], $tenant['id']]);
         $tenantData = $stmt->fetch();
+        
+        // Se não encontrou, buscar do tenant
+        if (!$tenantData) {
+            $stmt = $db->prepare("SELECT nome_empresa, documento, email_principal as email FROM tenants WHERE id = ?");
+            $stmt->execute([$tenant['id']]);
+            $tenantData = $stmt->fetch();
+        }
         
         // Criar PIX
         $pix = $pagouAPI->criarPixAssinatura(
             $tenant['id'],
             $tenantData['nome_empresa'],
             $tenantData['documento'],
-            $tenantData['email_principal']
+            $tenantData['email']
         );
         
         // Salvar no banco
