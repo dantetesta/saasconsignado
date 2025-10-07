@@ -24,33 +24,51 @@ if ($tenant['plano'] === 'pro') {
 }
 
 $error = '';
-$success = '';
-$payment_data = null;
+$pixData = null;
 
-// Processar upgrade
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upgrade'])) {
-    $forma_pagamento = $_POST['forma_pagamento'] ?? 'pix';
-    
-    if (!in_array($forma_pagamento, ['pix', 'boleto', 'cartao'])) {
-        $error = 'Forma de pagamento inválida';
-    } else {
-        try {
-            require_once 'classes/PagouIntegration.php';
-            require_once 'config/integrations.php';
-            
-            $pagou = new PagouIntegration();
-            $result = $pagou->createSubscription($tenant['id'], $forma_pagamento);
-            
-            if ($result['success']) {
-                $payment_data = $result;
-                $success = 'Assinatura criada com sucesso! Complete o pagamento abaixo.';
-            } else {
-                $error = $result['error'] ?? 'Erro ao processar upgrade';
-            }
-            
-        } catch (Exception $e) {
-            $error = 'Erro: ' . $e->getMessage();
+// Processar criação de PIX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['criar_pix'])) {
+    try {
+        // Validar CSRF
+        if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+            throw new Exception('Token de segurança inválido');
         }
+        
+        require_once 'classes/PagouAPI.php';
+        
+        $pagouAPI = new PagouAPI();
+        
+        // Buscar dados do tenant
+        $stmt = $db->prepare("SELECT nome_empresa, documento, email_principal FROM tenants WHERE id = ?");
+        $stmt->execute([$tenant['id']]);
+        $tenantData = $stmt->fetch();
+        
+        // Criar PIX
+        $pix = $pagouAPI->criarPixAssinatura(
+            $tenant['id'],
+            $tenantData['nome_empresa'],
+            $tenantData['documento'],
+            $tenantData['email_principal']
+        );
+        
+        // Salvar no banco
+        $stmt = $db->prepare("
+            INSERT INTO subscription_payments 
+            (tenant_id, charge_id, amount, status, qrcode_data, qrcode_image, created_at)
+            VALUES (?, ?, ?, 'pending', ?, ?, NOW())
+        ");
+        $stmt->execute([
+            $tenant['id'],
+            $pix['charge_id'],
+            $pix['amount'],
+            $pix['qrcode_data'],
+            $pix['qrcode_image']
+        ]);
+        
+        $pixData = $pix;
+        
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 }
 
