@@ -31,12 +31,17 @@ class PagouAPI {
      * @return array Dados do PIX criado
      */
     public function criarPixAssinatura($tenantId, $nome, $cpf, $email) {
+        // Validar se CPF foi fornecido
+        if (empty($cpf)) {
+            throw new Exception('CPF/CNPJ não cadastrado. Por favor, atualize seu perfil antes de fazer o upgrade.');
+        }
+        
         // Remove caracteres não numéricos do CPF
         $cpfLimpo = preg_replace('/\D/', '', $cpf);
         
-        // Valida CPF
-        if (strlen($cpfLimpo) !== 11) {
-            throw new Exception('CPF deve ter 11 dígitos');
+        // Valida CPF (11 dígitos) ou CNPJ (14 dígitos)
+        if (strlen($cpfLimpo) !== 11 && strlen($cpfLimpo) !== 14) {
+            throw new Exception('CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos. Por favor, atualize seu perfil.');
         }
         
         // Monta payload
