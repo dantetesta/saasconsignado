@@ -11,14 +11,59 @@
 class PagouAPI {
     private $apiKey;
     private $apiUrl;
+    private $ambiente;
     
     /**
      * Construtor
+     * Busca configuração do banco de dados
      */
     public function __construct() {
-        // Token de produção
-        $this->apiKey = '6476a737-7211-4e7c-ba1f-639eff09e270';
-        $this->apiUrl = 'https://api.pagou.com.br';
+        $this->loadConfig();
+    }
+    
+    /**
+     * Carregar configuração do banco
+     */
+    private function loadConfig() {
+        try {
+            $db = Database::getInstance()->getConnection();
+            
+            // Buscar configuração do gateway Pagou
+            $stmt = $db->query("
+                SELECT configuracao, ativo 
+                FROM payment_gateways 
+                WHERE slug = 'pagou' 
+                LIMIT 1
+            ");
+            $gateway = $stmt->fetch();
+            
+            if (!$gateway) {
+                throw new Exception('Gateway Pagou não encontrado no banco de dados');
+            }
+            
+            if (!$gateway['ativo']) {
+                throw new Exception('Gateway Pagou está desativado. Ative-o no painel admin.');
+            }
+            
+            $config = json_decode($gateway['configuracao'], true);
+            
+            if (empty($config['api_key'])) {
+                throw new Exception('API Key do Pagou não configurada. Configure no painel admin.');
+            }
+            
+            $this->apiKey = $config['api_key'];
+            $this->ambiente = $config['ambiente'] ?? 'production';
+            
+            // URL baseada no ambiente
+            if ($this->ambiente === 'sandbox') {
+                $this->apiUrl = 'https://sandbox.pagou.com.br/api';
+            } else {
+                $this->apiUrl = 'https://api.pagou.com.br';
+            }
+            
+        } catch (PDOException $e) {
+            throw new Exception('Erro ao carregar configuração do gateway: ' . $e->getMessage());
+        }
     }
     
     /**

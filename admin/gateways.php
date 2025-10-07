@@ -22,16 +22,39 @@ $db = Database::getInstance()->getConnection();
 $success = '';
 $error = '';
 
-// Processar ativação/desativação de gateway
+// Processar ações
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $gatewayId = $_POST['gateway_id'] ?? null;
     
     if ($_POST['action'] === 'toggle') {
+        // Ativar/Desativar gateway
         $stmt = $db->prepare("UPDATE payment_gateways SET ativo = NOT ativo WHERE id = ?");
         if ($stmt->execute([$gatewayId])) {
             $success = 'Status do gateway atualizado!';
         } else {
             $error = 'Erro ao atualizar gateway';
+        }
+    }
+    elseif ($_POST['action'] === 'configure') {
+        // Configurar credenciais
+        $apiKey = trim($_POST['api_key'] ?? '');
+        $ambiente = $_POST['ambiente'] ?? 'production';
+        
+        if (empty($apiKey)) {
+            $error = 'API Key é obrigatória';
+        } else {
+            // Salvar configuração
+            $config = [
+                'api_key' => $apiKey,
+                'ambiente' => $ambiente
+            ];
+            
+            $stmt = $db->prepare("UPDATE payment_gateways SET configuracao = ?, configurado = 1 WHERE id = ?");
+            if ($stmt->execute([json_encode($config), $gatewayId])) {
+                $success = 'Gateway configurado com sucesso!';
+            } else {
+                $error = 'Erro ao salvar configuração';
+            }
         }
     }
 }
@@ -196,11 +219,17 @@ $pageTitle = 'Gateways de Pagamento';
                         <?php endif; ?>
                         
                         <button 
-                            onclick="alert('Configuração de credenciais será implementada em breve!')"
-                            class="float-right px-3 py-1 text-sm text-purple-600 hover:text-purple-700 font-medium"
+                            onclick="openConfigModal(<?php echo $gateway['id']; ?>, '<?php echo htmlspecialchars($gateway['nome']); ?>', <?php echo htmlspecialchars(json_encode($gateway['configuracao'])); ?>)"
+                            class="float-right px-3 py-1 text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
                         >
                             ⚙️ Configurar
                         </button>
+                        
+                        <?php if ($gateway['configurado']): ?>
+                            <span class="float-right mr-3 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                                ✓ Configurado
+                            </span>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -230,6 +259,171 @@ $pageTitle = 'Gateways de Pagamento';
         </div>
 
     </div>
+
+    <!-- Modal de Configuração -->
+    <div id="configModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <form method="POST" id="configForm">
+                <input type="hidden" name="action" value="configure">
+                <input type="hidden" name="gateway_id" id="modal_gateway_id">
+                
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-1">Configurar Gateway</h2>
+                            <p class="text-purple-100 text-sm" id="modal_gateway_name"></p>
+                        </div>
+                        <button type="button" onclick="closeConfigModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6 space-y-6">
+                    <!-- API Key -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-900 mb-2">
+                            🔑 API Key / Token
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="api_key" 
+                            id="modal_api_key"
+                            required
+                            placeholder="Ex: 6476a737-7211-4e7c-ba1f-639eff09e270"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
+                        >
+                        <p class="text-xs text-gray-500 mt-2">
+                            💡 Obtenha sua API Key no painel do gateway de pagamento
+                        </p>
+                    </div>
+
+                    <!-- Ambiente -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-900 mb-2">
+                            🌍 Ambiente
+                        </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition">
+                                <input 
+                                    type="radio" 
+                                    name="ambiente" 
+                                    value="sandbox" 
+                                    id="ambiente_sandbox"
+                                    class="sr-only peer"
+                                >
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900">🧪 Sandbox (Teste)</div>
+                                    <div class="text-xs text-gray-600">Para desenvolvimento</div>
+                                </div>
+                                <div class="hidden peer-checked:block">
+                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </label>
+
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition">
+                                <input 
+                                    type="radio" 
+                                    name="ambiente" 
+                                    value="production" 
+                                    id="ambiente_production"
+                                    checked
+                                    class="sr-only peer"
+                                >
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900">🚀 Produção</div>
+                                    <div class="text-xs text-gray-600">Pagamentos reais</div>
+                                </div>
+                                <div class="hidden peer-checked:block">
+                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Aviso -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="text-sm text-yellow-800">
+                                <strong>Atenção:</strong> Mantenha suas credenciais seguras. Nunca compartilhe sua API Key.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3">
+                    <button 
+                        type="button"
+                        onclick="closeConfigModal()"
+                        class="px-6 py-2.5 text-gray-700 font-semibold hover:bg-gray-200 rounded-lg transition"
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit"
+                        class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition"
+                    >
+                        💾 Salvar Configuração
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openConfigModal(gatewayId, gatewayName, config) {
+            document.getElementById('modal_gateway_id').value = gatewayId;
+            document.getElementById('modal_gateway_name').textContent = gatewayName;
+            
+            // Preencher campos se já configurado
+            if (config && config.api_key) {
+                document.getElementById('modal_api_key').value = config.api_key;
+                
+                if (config.ambiente === 'sandbox') {
+                    document.getElementById('ambiente_sandbox').checked = true;
+                } else {
+                    document.getElementById('ambiente_production').checked = true;
+                }
+            } else {
+                // Limpar campos
+                document.getElementById('modal_api_key').value = '';
+                document.getElementById('ambiente_production').checked = true;
+            }
+            
+            document.getElementById('configModal').classList.remove('hidden');
+        }
+        
+        function closeConfigModal() {
+            document.getElementById('configModal').classList.add('hidden');
+        }
+        
+        // Fechar ao clicar fora
+        document.getElementById('configModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfigModal();
+            }
+        });
+        
+        // Fechar com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfigModal();
+            }
+        });
+    </script>
 
 </body>
 </html>
