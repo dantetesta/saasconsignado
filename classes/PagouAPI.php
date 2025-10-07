@@ -87,15 +87,20 @@ class PagouAPI {
         
         $data = json_decode($response, true);
         
+        // Validar resposta
+        if (!isset($data['id']) || !isset($data['payload'])) {
+            throw new Exception('Resposta inválida da API Pagou: ' . json_encode($data));
+        }
+        
         // Retorna dados formatados
         return [
             'charge_id' => $data['id'],
-            'qrcode_data' => $data['payload']['data'], // Código copia e cola
-            'qrcode_image' => $data['payload']['image'], // Base64 (sem prefixo)
-            'amount' => $data['amount'],
-            'expiration' => $data['expiration'],
-            'status' => $data['status'],
-            'paid_at' => $data['paid_at']
+            'qrcode_data' => $data['payload']['data'] ?? '', // Código copia e cola
+            'qrcode_image' => $data['payload']['image'] ?? '', // Base64 (sem prefixo)
+            'amount' => $data['amount'] ?? 20.00,
+            'expiration' => $data['expiration'] ?? 3600,
+            'status' => $data['status'] ?? 0,
+            'paid_at' => $data['paid_at'] ?? null
         ];
     }
     
