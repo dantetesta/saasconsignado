@@ -51,19 +51,17 @@
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhuma consignação encontrada</h3>
             <p class="text-gray-600">Ainda não há consignações registradas para o seu estabelecimento.</p>
-        </div>
     <?php else: ?>
         <!-- Grid de Consignações -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($consignacoes as $cons): ?>
                 <a href="<?php echo defined('BASE_PATH') ? BASE_PATH : ''; ?>/consulta_publica.php?token=<?php echo $token; ?>&id=<?php echo $cons['id']; ?>" 
-                   class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden group">
+                   class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition duration-200 group">
                     
                     <!-- Header do Card -->
                     <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
                         <div class="flex items-center justify-between">
                             <span class="text-white font-semibold text-lg">Consignação #<?php echo $cons['id']; ?></span>
-                            <span class="px-3 py-1 text-xs font-medium rounded-full <?php echo getStatusBadgeClass($cons['status']); ?>">
                                 <?php echo translateStatus($cons['status']); ?>
                             </span>
                         </div>

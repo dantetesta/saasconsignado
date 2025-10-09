@@ -11,11 +11,17 @@ header('Content-Type: text/html; charset=utf-8');
 mb_internal_encoding('UTF-8');
 
 require_once 'config/config.php';
+require_once 'classes/PricingManager.php';
 requireLogin();
 
 $db = Database::getInstance()->getConnection();
 $tenant = getCurrentTenant();
 $pageTitle = 'Upgrade para Plano Pro';
+
+// Usar PricingManager para obter informações dos planos
+$pricingManager = PricingManager::getInstance();
+$plansInfo = $pricingManager->getPlansInfo();
+$precoPro = $pricingManager->getProPrice();
 
 // Se já é Pro, redirecionar
 if ($tenant['plano'] === 'pro') {
@@ -106,7 +112,7 @@ include 'includes/header.php';
     <!-- Header -->
     <div class="text-center mb-8">
         <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Faça Upgrade para o Pro</h1>
-        <p class="text-gray-600">Apenas R$ 20/mês • Cancele quando quiser</p>
+        <p class="text-gray-600">Apenas R$ <?php echo number_format($precoPro, 2, ',', '.'); ?>/mês • Cancele quando quiser</p>
     </div>
 
     <?php if ($error): ?>
@@ -187,7 +193,7 @@ include 'includes/header.php';
                     <li>Abra o app do seu banco</li>
                     <li>Escolha "Pagar com PIX"</li>
                     <li>Escaneie o QR Code ou cole o código</li>
-                    <li>Confirme o pagamento de R$ 20,00</li>
+                    <li>Confirme o pagamento de <?php echo $plansInfo['pro']['price_formatted']; ?></li>
                     <li>Aguarde a confirmação automática</li>
                 </ol>
             </div>
@@ -195,7 +201,7 @@ include 'includes/header.php';
             <!-- Informações -->
             <div class="text-center text-sm text-gray-600">
                 <p>Após a confirmação do pagamento, seu plano será ativado automaticamente!</p>
-                <p class="mt-2">Validade: 30 dias a partir da ativação</p>
+                <p class="mt-2">Validade: <?php echo $plansInfo['pro']['days']; ?> dias a partir da ativação</p>
             </div>
         </div>
 
@@ -203,6 +209,8 @@ include 'includes/header.php';
         <script>
             const chargeId = '<?php echo $pixData['charge_id']; ?>';
             let checkInterval = null;
+            let tentativas = 0;
+            const maxTentativas = 60; // Máximo 5 minutos (60 x 5s)
             
             // Iniciar verificação após 5 segundos
             setTimeout(() => {
@@ -211,8 +219,23 @@ include 'includes/header.php';
             }, 5000);
             
             async function verificarPagamento() {
+                tentativas++;
+                
+                // Parar após máximo de tentativas
+                if (tentativas > maxTentativas) {
+                    clearInterval(checkInterval);
+                    document.getElementById('status-text').innerHTML = 
+                        '<span class="text-yellow-600 font-bold">⏰ Tempo limite atingido. Recarregue a página para continuar verificando.</span>';
+                    return;
+                }
+                
                 try {
                     const response = await fetch(`/api/verificar_pagamento.php?charge_id=${chargeId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Erro na requisição');
+                    }
+                    
                     const data = await response.json();
                     
                     if (data.pago) {
@@ -228,9 +251,20 @@ include 'includes/header.php';
                         setTimeout(() => {
                             window.location.href = '/index.php?upgraded=1';
                         }, 2000);
+                    } else {
+                        // Atualizar contador de tentativas
+                        const minutosRestantes = Math.ceil((maxTentativas - tentativas) * 5 / 60);
+                        document.getElementById('status-text').innerHTML = 
+                            `Aguardando pagamento... (${tentativas}/${maxTentativas} - ${minutosRestantes}min restantes)`;
                     }
                 } catch (error) {
                     console.error('Erro ao verificar pagamento:', error);
+                    
+                    // Em caso de erro, reduzir frequência
+                    if (tentativas > 10) {
+                        clearInterval(checkInterval);
+                        checkInterval = setInterval(verificarPagamento, 10000); // A cada 10s após 10 tentativas
+                    }
                 }
             }
             
@@ -255,18 +289,12 @@ include 'includes/header.php';
                         <p class="text-gray-600 text-sm">Plano Atual</p>
                     </div>
                     <ul class="space-y-3 mb-6">
+                        <?php foreach ($plansInfo['free']['features'] as $feature): ?>
                         <li class="flex items-start gap-2">
                             <span class="text-gray-400">❌</span>
-                            <span class="text-sm text-gray-600">5 estabelecimentos</span>
+                            <span class="text-sm text-gray-600"><?php echo htmlspecialchars($feature); ?></span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-gray-400">❌</span>
-                            <span class="text-sm text-gray-600">5 consignações por estabelecimento</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-gray-400">❌</span>
-                            <span class="text-sm text-gray-600">Funcionalidades limitadas</span>
-                        </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 
@@ -276,26 +304,16 @@ include 'includes/header.php';
                         RECOMENDADO
                     </div>
                     <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-purple-900 mb-2">Pro</h3>
-                        <p class="text-3xl font-bold text-purple-600">R$ 20<span class="text-lg">/mês</span></p>
+                        <h3 class="text-2xl font-bold text-purple-900 mb-2"><?php echo $plansInfo['pro']['name']; ?></h3>
+                        <p class="text-3xl font-bold text-purple-600"><?php echo $plansInfo['pro']['price_formatted']; ?><span class="text-lg">/mês</span></p>
                     </div>
                     <ul class="space-y-3 mb-6">
+                        <?php foreach ($plansInfo['pro']['features'] as $feature): ?>
                         <li class="flex items-start gap-2">
                             <span class="text-green-500">✅</span>
-                            <span class="text-sm text-gray-900 font-medium">Estabelecimentos ilimitados</span>
+                            <span class="text-sm text-gray-900 font-medium"><?php echo htmlspecialchars($feature); ?></span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-500">✅</span>
-                            <span class="text-sm text-gray-900 font-medium">Consignações ilimitadas</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-500">✅</span>
-                            <span class="text-sm text-gray-900 font-medium">Todas as funcionalidades</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-green-500">✅</span>
-                            <span class="text-sm text-gray-900 font-medium">Suporte prioritário</span>
-                        </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
             </div>
@@ -312,7 +330,7 @@ include 'includes/header.php';
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                         </svg>
-                        Pagar com PIX - R$ 20,00
+                        Pagar com PIX - <?php echo $plansInfo['pro']['price_formatted']; ?>
                     </button>
                     <p class="text-sm text-gray-600 mt-3">Pagamento único mensal • Cancele quando quiser</p>
                 </form>

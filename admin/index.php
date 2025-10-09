@@ -69,11 +69,20 @@ $pageTitle = 'Dashboard Admin';
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     💰 Financeiro
                 </a>
+                <a href="/admin/pagamentos.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    💳 Pagamentos
+                </a>
                 <a href="/admin/gateways.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
-                    💳 Gateways
+                    🔗 Gateways
+                </a>
+                <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    ⚙️ Configurações
                 </a>
                 <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     📝 Logs
+                </a>
+                <a href="/admin/monitor_api.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    🔍 Monitor
                 </a>
             </nav>
         </div>
@@ -130,7 +139,7 @@ $pageTitle = 'Dashboard Admin';
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
                     </svg>
                 </div>
-                <p class="text-3xl font-bold">R$ <?php echo number_format($metrics['mrr'], 2, ',', '.'); ?></p>
+                <p class="text-3xl font-bold">R$ <?php echo number_format($metrics['mrr'] ?? 0, 2, ',', '.'); ?></p>
                 <p class="text-xs opacity-90 mt-1">Receita mensal recorrente</p>
             </div>
 

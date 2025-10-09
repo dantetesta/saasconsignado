@@ -9,6 +9,7 @@
 session_start();
 require_once '../config/database.php';
 require_once '../classes/PagouAPI.php';
+require_once '../classes/PaymentCache.php';
 
 header('Content-Type: application/json');
 
@@ -43,9 +44,33 @@ try {
         exit;
     }
     
-    // Verificar na API Pagou
+    // Verificar cache primeiro
+    $cachedResult = PaymentCache::get($chargeId);
+    if ($cachedResult !== null) {
+        echo json_encode($cachedResult);
+        exit;
+    }
+    
+    // Verificar na API Pagou com timeout reduzido
     $pagouAPI = new PagouAPI();
-    $result = $pagouAPI->verificarPagamento($chargeId);
+    
+    // Definir timeout menor para evitar travamentos
+    ini_set('max_execution_time', 10);
+    
+    try {
+        $result = $pagouAPI->verificarPagamento($chargeId);
+        
+        // Armazenar resultado no cache
+        PaymentCache::set($chargeId, ['pago' => $result['pago']]);
+        
+    } catch (Exception $apiError) {
+        // Em caso de erro na API, retornar não pago e cachear por menos tempo
+        error_log("Erro na API Pagou: " . $apiError->getMessage());
+        
+        $result = ['pago' => false];
+        // Cache por apenas 10 segundos em caso de erro
+        PaymentCache::set($chargeId, $result);
+    }
     
     if ($result['pago']) {
         // PAGAMENTO CONFIRMADO!

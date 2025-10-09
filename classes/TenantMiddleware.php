@@ -60,21 +60,31 @@ class TenantMiddleware {
     public static function setTenant($tenant_id) {
         $db = Database::getInstance()->getConnection();
         
-        $stmt = $db->prepare("
-            SELECT * FROM tenants 
-            WHERE id = ? AND status IN ('ativo', 'trial')
-        ");
+        // Buscar tenant independente do status
+        $stmt = $db->prepare("SELECT * FROM tenants WHERE id = ?");
         $stmt->execute([$tenant_id]);
         $tenant = $stmt->fetch();
         
         if (!$tenant) {
-            throw new Exception("Tenant não encontrado ou inativo");
+            throw new Exception("Tenant não encontrado");
+        }
+        
+        // Verificar se o tenant está ativo
+        if (!in_array($tenant['status'], ['ativo', 'trial'])) {
+            // Retornar informações sobre o status inativo
+            return [
+                'success' => false,
+                'status' => $tenant['status'],
+                'tenant_data' => $tenant
+            ];
         }
         
         self::$current_tenant_id = $tenant_id;
         self::$tenant_data = $tenant;
         $_SESSION['tenant_id'] = $tenant_id;
         $_SESSION['tenant_data'] = $tenant;
+        
+        return ['success' => true];
     }
     
     /**

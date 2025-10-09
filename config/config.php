@@ -127,7 +127,14 @@ function requireLogin() {
         // Tentar recuperar da sessão
         if (isset($_SESSION['tenant_id'])) {
             try {
-                TenantMiddleware::setTenant($_SESSION['tenant_id']);
+                $tenantResult = TenantMiddleware::setTenant($_SESSION['tenant_id']);
+                
+                // Se o tenant está bloqueado, fazer logout
+                if (!$tenantResult['success']) {
+                    session_destroy();
+                    header('Location: ' . url('/login.php?blocked=1'));
+                    exit;
+                }
             } catch (Exception $e) {
                 // Se falhar, fazer logout
                 session_destroy();

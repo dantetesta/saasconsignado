@@ -69,11 +69,20 @@ $pageTitle = 'Relatório Financeiro';
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
                     💰 Financeiro
                 </a>
+                <a href="/admin/pagamentos.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    💳 Pagamentos
+                </a>
                 <a href="/admin/gateways.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
-                    💳 Gateways
+                    🔗 Gateways
+                </a>
+                <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    ⚙️ Configurações
                 </a>
                 <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     📝 Logs
+                </a>
+                <a href="/admin/monitor_api.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
+                    🔍 Monitor
                 </a>
             </nav>
         </div>
@@ -104,7 +113,7 @@ $pageTitle = 'Relatório Financeiro';
                             <span class="text-sm font-medium text-gray-700 w-20"><?php echo $mesFormatado; ?></span>
                             <div class="flex-1 bg-gray-200 rounded-full h-8 overflow-hidden">
                                 <div class="bg-gradient-to-r from-green-500 to-emerald-600 h-full flex items-center justify-end pr-3 text-white text-sm font-bold" style="width: <?php echo min(100, ($receita / 1000) * 100); ?>%">
-                                    R$ <?php echo number_format($receita, 2, ',', '.'); ?>
+                                    R$ <?php echo number_format($receita ?? 0, 2, ',', '.'); ?>
                                 </div>
                             </div>
                             <span class="text-xs text-gray-500 w-24"><?php echo $pagamentos; ?> pagamento(s)</span>

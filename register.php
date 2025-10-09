@@ -116,7 +116,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Fazer login automático
             require_once 'classes/TenantMiddleware.php';
-            TenantMiddleware::setTenant($tenant_id);
+            $tenantResult = TenantMiddleware::setTenant($tenant_id);
+            
+            // Verificar se o tenant foi criado corretamente
+            if (!$tenantResult['success']) {
+                throw new Exception('Erro ao configurar conta. Tente novamente.');
+            }
             
             $_SESSION['user_id'] = $user_id;
             $_SESSION['user_name'] = $nome_empresa;
