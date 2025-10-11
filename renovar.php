@@ -132,8 +132,8 @@ include 'includes/header.php';
         <!-- Tela de Pagamento PIX (mesmo código do upgrade_pix.php) -->
         <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                    <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                     </svg>
                 </div>
@@ -141,7 +141,7 @@ include 'includes/header.php';
                 <p id="status-text" class="text-gray-600">Aguardando pagamento...</p>
             </div>
 
-            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                 <div class="text-center mb-4">
                     <img 
                         id="qrcode-img"
@@ -163,7 +163,7 @@ include 'includes/header.php';
                         >
                         <button 
                             onclick="copiarCodigo()"
-                            class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition"
+                            class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
                         >
                             📋 Copiar
                         </button>
@@ -224,12 +224,12 @@ include 'includes/header.php';
         <!-- Tela Inicial -->
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <!-- Status Atual -->
-            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                 <h3 class="text-xl font-bold text-purple-900 mb-4">📊 Status da Assinatura</h3>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Plano Atual</p>
-                        <p class="text-2xl font-bold text-purple-600">Pro</p>
+                        <p class="text-2xl font-bold text-blue-600">Pro</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Dias Restantes</p>
@@ -279,7 +279,7 @@ include 'includes/header.php';
                 <button 
                     type="submit"
                     name="renovar"
-                    class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg rounded-xl hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105 shadow-lg"
+                    class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-emerald-700 transition transform hover:scale-105 shadow-lg"
                 >
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>

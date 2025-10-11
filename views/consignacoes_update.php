@@ -207,7 +207,7 @@ if (empty($itens)) {
     </div>
 
     <!-- Card de Resumo -->
-    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200 mb-6">
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-blue-200 mb-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">📊 Resumo da Atualização</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-white rounded-lg p-4 shadow-sm">
@@ -262,7 +262,7 @@ if (empty($itens)) {
         <a href="/consignacoes.php?action=view&id=<?php echo $consignacao['id']; ?>" class="px-6 py-3 border border-gray-300 text-gray-700 text-center font-medium rounded-lg hover:bg-gray-50 transition">
             Cancelar
         </a>
-        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-md">
             💾 Salvar Alterações
         </button>
     </div>

@@ -32,7 +32,7 @@ $pageTitle = $pageTitle ?? 'Dashboard';
 <body class="bg-gray-50">
 
     <!-- Header Admin Padrão -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">

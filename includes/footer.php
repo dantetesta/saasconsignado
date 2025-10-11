@@ -8,7 +8,7 @@
                     &copy; <?php echo date('Y'); ?> Sistema de Consignados - Versão <?php echo VERSION; ?>
                 </p>
                 <p class="text-sm text-gray-600">
-                    Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+                    Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
                 </p>
             </div>
         </div>

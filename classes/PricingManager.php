@@ -3,7 +3,7 @@
  * Gerenciador de Preços e Configurações de Planos
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 2.1.0
+ * @version 2.2.0
  */
 
 class PricingManager 
@@ -70,6 +70,16 @@ class PricingManager
     }
     
     /**
+     * Alias para getFreeEstablishmentLimit (português)
+     * 
+     * @return int
+     */
+    public function getFreeEstabelecimentosLimit(): int 
+    {
+        return $this->getFreeEstablishmentLimit();
+    }
+    
+    /**
      * Obter limite de consignações do Plano Free
      * 
      * @return int
@@ -77,6 +87,36 @@ class PricingManager
     public function getFreeConsignmentLimit(): int 
     {
         return intval($this->getSetting('plano_free_consignacoes', '5'));
+    }
+    
+    /**
+     * Alias para getFreeConsignmentLimit (português)
+     * 
+     * @return int
+     */
+    public function getFreeConsignacoesLimit(): int 
+    {
+        return $this->getFreeConsignmentLimit();
+    }
+    
+    /**
+     * Obter limite de produtos do Plano Free
+     * 
+     * @return int
+     */
+    public function getFreeProductsLimit(): int 
+    {
+        return intval($this->getSetting('plano_free_produtos', '20'));
+    }
+    
+    /**
+     * Alias para getFreeProductsLimit (português)
+     * 
+     * @return int
+     */
+    public function getFreeProdutosLimit(): int 
+    {
+        return $this->getFreeProductsLimit();
     }
     
     /**
@@ -237,5 +277,24 @@ class PricingManager
     {
         $formatted = number_format($price, 2, ',', '.');
         return $showCurrency ? 'R$ ' . $formatted : $formatted;
+    }
+    
+    /**
+     * Obter todas as configurações de preços em um array
+     * Método estático para uso na landing page
+     * 
+     * @return array
+     */
+    public static function getPricing(): array 
+    {
+        $instance = self::getInstance();
+        
+        return [
+            'pro_price' => $instance->getProPrice(false),
+            'pro_price_formatted' => $instance->getProPrice(true),
+            'free_consignacoes_limit' => $instance->getFreeConsignacoesLimit(),
+            'free_produtos_limit' => $instance->getFreeProdutosLimit(),
+            'free_estabelecimentos_limit' => $instance->getFreeEstabelecimentosLimit(),
+        ];
     }
 }

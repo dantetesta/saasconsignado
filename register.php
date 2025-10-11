@@ -6,16 +6,14 @@
  * @version 2.0.0
  */
 
-// Não requer login
-session_start();
+// Não requer login - sessão será iniciada pelo config.php
+require_once 'config/database.php';
 
 // Se já estiver logado, redireciona
 if (isset($_SESSION['user_id'])) {
     header('Location: /index.php');
     exit;
 }
-
-require_once 'config/database.php';
 
 $error = '';
 $success = '';
@@ -25,10 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $senha = $_POST['senha'] ?? '';
     $senha_confirm = $_POST['senha_confirm'] ?? '';
-    $subdomain = strtolower(trim($_POST['subdomain'] ?? ''));
     
     // Validações
-    if (empty($nome_empresa) || empty($email) || empty($senha) || empty($subdomain)) {
+    if (empty($nome_empresa) || empty($email) || empty($senha)) {
         $error = 'Todos os campos são obrigatórios.';
     } elseif ($senha !== $senha_confirm) {
         $error = 'As senhas não conferem.';
@@ -36,8 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'A senha deve ter no mínimo 6 caracteres.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Email inválido.';
-    } elseif (!preg_match('/^[a-z0-9-]+$/', $subdomain)) {
-        $error = 'Subdomínio inválido. Use apenas letras minúsculas, números e hífen.';
     } else {
         try {
             $db = Database::getInstance()->getConnection();
@@ -49,12 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception("Este email já está cadastrado.");
             }
             
-            // Verificar se subdomínio já existe
-            $stmt = $db->prepare("SELECT id FROM tenants WHERE subdomain = ?");
-            $stmt->execute([$subdomain]);
-            if ($stmt->fetch()) {
-                throw new Exception("Este subdomínio já está em uso. Escolha outro.");
-            }
+            // Gerar subdomínio único baseado no ID (será atualizado após inserção)
+            $subdomain = 'tenant-' . time() . '-' . rand(1000, 9999);
             
             // Iniciar transação
             $db->beginTransaction();
@@ -73,6 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $stmt->execute([$nome_empresa, $subdomain, $email]);
             $tenant_id = $db->lastInsertId();
+            
+            // Atualizar subdomínio com ID real do tenant
+            $subdomain_final = 'tenant-' . $tenant_id;
+            $stmt = $db->prepare("UPDATE tenants SET subdomain = ? WHERE id = ?");
+            $stmt->execute([$subdomain_final, $tenant_id]);
             
             // Criar usuário administrador
             $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
@@ -140,12 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Gerar sugestão de subdomínio baseado no nome da empresa (se preenchido)
-$suggested_subdomain = '';
-if (!empty($_POST['nome_empresa'])) {
-    $suggested_subdomain = strtolower(preg_replace('/[^a-z0-9]+/i', '-', trim($_POST['nome_empresa'])));
-    $suggested_subdomain = trim($suggested_subdomain, '-');
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -167,7 +157,7 @@ if (!empty($_POST['nome_empresa'])) {
     <div class="w-full max-w-2xl">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-lg mb-4">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-2xl shadow-lg mb-4">
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
@@ -200,32 +190,12 @@ if (!empty($_POST['nome_empresa'])) {
                         id="nome_empresa" 
                         name="nome_empresa" 
                         required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         placeholder="Minha Empresa"
                         value="<?php echo isset($_POST['nome_empresa']) ? htmlspecialchars($_POST['nome_empresa']) : ''; ?>"
                     >
                 </div>
 
-                <!-- Subdomínio -->
-                <div>
-                    <label for="subdomain" class="block text-sm font-medium text-gray-700 mb-2">
-                        Escolha seu subdomínio *
-                    </label>
-                    <div class="flex items-center gap-2">
-                        <input 
-                            type="text" 
-                            id="subdomain" 
-                            name="subdomain" 
-                            required
-                            pattern="[a-z0-9-]+"
-                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                            placeholder="minha-empresa"
-                            value="<?php echo isset($_POST['subdomain']) ? htmlspecialchars($_POST['subdomain']) : $suggested_subdomain; ?>"
-                        >
-                        <span class="text-gray-600">.seudominio.com.br</span>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-500">Apenas letras minúsculas, números e hífen</p>
-                </div>
 
                 <!-- Email -->
                 <div>
@@ -238,7 +208,7 @@ if (!empty($_POST['nome_empresa'])) {
                         name="email" 
                         required
                         autocomplete="email"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         placeholder="seu@email.com"
                         value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
                     >
@@ -256,7 +226,7 @@ if (!empty($_POST['nome_empresa'])) {
                         required
                         minlength="6"
                         autocomplete="new-password"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         placeholder="••••••••"
                     >
                     <p class="mt-2 text-sm text-gray-500">Mínimo de 6 caracteres</p>
@@ -274,13 +244,13 @@ if (!empty($_POST['nome_empresa'])) {
                         required
                         minlength="6"
                         autocomplete="new-password"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         placeholder="••••••••"
                     >
                 </div>
 
                 <!-- Plano Free Info -->
-                <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-blue-200 rounded-lg p-4">
                     <h3 class="font-semibold text-purple-900 mb-2">✨ Plano Free Inclui:</h3>
                     <ul class="space-y-1 text-sm text-purple-800">
                         <li>✓ Até 5 estabelecimentos</li>
@@ -289,7 +259,7 @@ if (!empty($_POST['nome_empresa'])) {
                         <li>✓ Relatórios básicos</li>
                         <li>✓ Suporte por email</li>
                     </ul>
-                    <p class="mt-3 text-xs text-purple-700">
+                    <p class="mt-3 text-xs text-blue-700">
                         Faça upgrade para o <strong>Plano Pro</strong> por apenas R$ 20/mês e tenha tudo ilimitado!
                     </p>
                 </div>
@@ -297,7 +267,7 @@ if (!empty($_POST['nome_empresa'])) {
                 <!-- Botão de Registro -->
                 <button 
                     type="submit" 
-                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform transition duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                    class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                     Criar Conta Grátis
                 </button>
@@ -307,7 +277,7 @@ if (!empty($_POST['nome_empresa'])) {
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600">
                     Já tem uma conta? 
-                    <a href="/login.php" class="text-purple-600 hover:text-purple-700 font-medium">Faça login</a>
+                    <a href="/login.php" class="text-blue-600 hover:text-blue-700 font-medium">Faça login</a>
                 </p>
             </div>
         </div>
@@ -315,7 +285,7 @@ if (!empty($_POST['nome_empresa'])) {
         <!-- Footer -->
         <div class="text-center mt-8">
             <p class="text-sm text-gray-600">
-                Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+                Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
             </p>
             <p class="text-xs text-gray-500 mt-2">Versão 2.0.0 SaaS</p>
         </div>

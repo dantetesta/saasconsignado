@@ -10,7 +10,7 @@ require_once 'config/config.php';
 
 // Se já estiver logado, redireciona para o dashboard
 if (isLoggedIn()) {
-    redirect('/index.php');
+    redirect('/dashboard.php');
 }
 
 $error = '';
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['login_time'] = time();
                 
-                redirect('/index.php');
+                redirect('/dashboard.php');
             } else {
                 // Registrar tentativa falha
                 recordAttempt('login_' . $email);
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="w-full max-w-md">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-lg mb-4">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-2xl shadow-lg mb-4">
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name="email" 
                         required
                         autocomplete="email"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         placeholder="seu@email.com"
                         value="<?php echo isset($_POST['email']) ? sanitize($_POST['email']) : ''; ?>"
                     >
@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name="senha" 
                         required
                         autocomplete="current-password"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         placeholder="••••••••"
                     >
                 </div>
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Botão de Login -->
                 <button 
                     type="submit" 
-                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform transition duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                    class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                     Entrar
                 </button>
@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600">
                     Não tem uma conta? 
-                    <a href="/register.php" class="text-purple-600 hover:text-purple-700 font-medium">Cadastre-se grátis</a>
+                    <a href="/register.php" class="text-blue-600 hover:text-blue-700 font-medium">Cadastre-se grátis</a>
                 </p>
             </div>
 
@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Footer -->
         <div class="text-center mt-8">
             <p class="text-sm text-gray-600">
-                Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+                Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
             </p>
             <p class="text-xs text-gray-500 mt-2">Versão <?php echo VERSION; ?></p>
         </div>

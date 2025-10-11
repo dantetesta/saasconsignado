@@ -68,12 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Logo/Header -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-                <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
-            <p class="text-purple-200">Acesso restrito ao dono do SaaS</p>
+            <p class="text-blue-200">Acesso restrito ao dono do SaaS</p>
         </div>
 
         <!-- Card de Login -->
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="email" 
                         name="email" 
                         required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="admin@exemplo.com"
                         autocomplete="email"
                     >
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="senha" 
                         name="senha" 
                         required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="••••••••"
                         autocomplete="current-password"
                     >
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Botão -->
                 <button 
                     type="submit"
-                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105"
+                    class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition transform hover:scale-105"
                 >
                     Entrar no Painel
                 </button>
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Link para site principal -->
         <div class="text-center mt-6">
-            <a href="/" class="text-purple-200 hover:text-white text-sm transition">
+            <a href="/" class="text-blue-200 hover:text-white text-sm transition">
                 ← Voltar ao site
             </a>
         </div>

@@ -247,7 +247,7 @@ include 'includes/menu.php';
             <form method="GET" class="grid md:grid-cols-5 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="">Todos</option>
                         <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pendente</option>
                         <option value="paid" <?php echo $status === 'paid' ? 'selected' : ''; ?>>Pago</option>
@@ -260,23 +260,23 @@ include 'includes/menu.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">Assinante</label>
                     <input type="text" name="tenant" value="<?php echo htmlspecialchars($tenant); ?>" 
                            placeholder="Nome do assinante" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
                     <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
                     <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 
                 <div class="flex items-end">
-                    <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                         Filtrar
                     </button>
                 </div>
@@ -348,7 +348,7 @@ include 'includes/menu.php';
                                         <?php endif; ?>
                                         
                                         <a href="/admin/tenants.php?id=<?php echo $payment['tenant_id']; ?>" 
-                                           class="text-purple-600 hover:text-purple-900 text-sm font-medium">
+                                           class="text-blue-600 hover:text-purple-900 text-sm font-medium">
                                             Ver Assinante
                                         </a>
                                     </div>

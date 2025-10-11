@@ -5,7 +5,7 @@
  * Permite que estabelecimentos visualizem suas consignações através de um link público
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.2.0
+ * @version 1.2.1
  */
 
 // Carregar configurações (já inicia a sessão)
@@ -78,9 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <h2>Recuperação de Senha</h2>
             <p>Olá, {$estabelecimento['nome']}!</p>
             <p>Sua nova senha de acesso à consulta de consignações é:</p>
-            <h1 style='font-size: 32px; color: #9333ea; letter-spacing: 4px;'>{$nova_senha}</h1>
+            <h1 style='font-size: 32px; color: #2563eb; letter-spacing: 4px;'>{$nova_senha}</h1>
             <p>Use esta senha para acessar suas consignações.</p>
-            <p><a href='{$protocol}://{$host}/consulta_publica.php?token={$token}' style='background: #9333ea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;'>Acessar Agora</a></p>
+            <p><a href='{$protocol}://{$host}/consulta_publica.php?token={$token}' style='background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;'>Acessar Agora</a></p>
         ";
         
         // Enviar email usando PHPMailer
@@ -307,7 +307,7 @@ if ($autenticado && $estabelecimento) {
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 via-emerald-50 to-cyan-50 min-h-screen">
 
 <?php if ($error): ?>
     <!-- Tela de Erro -->
@@ -332,14 +332,14 @@ if ($autenticado && $estabelecimento) {
         <div class="max-w-md w-full">
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-8 text-center">
+                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 p-8 text-center">
                     <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                     </div>
                     <h1 class="text-2xl font-bold text-white mb-2">Consulta de Consignação</h1>
-                    <p class="text-purple-100"><?php echo htmlspecialchars($estabelecimento['nome']); ?></p>
+                    <p class="text-blue-100"><?php echo htmlspecialchars($estabelecimento['nome']); ?></p>
                 </div>
                 
                 <!-- Form -->
@@ -361,7 +361,7 @@ if ($autenticado && $estabelecimento) {
                                 name="senha"
                                 required
                                 autofocus
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                                 placeholder="••••••••"
                             >
                             <p class="text-xs text-gray-500 mt-2">
@@ -371,7 +371,7 @@ if ($autenticado && $estabelecimento) {
                         
                         <button 
                             type="submit" 
-                            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-[1.02] active:scale-[0.98]"
+                            class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition transform hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Acessar Consignações
                         </button>
@@ -379,7 +379,7 @@ if ($autenticado && $estabelecimento) {
                     
                     <!-- Link Esqueci a Senha -->
                     <div class="mt-4 text-center">
-                        <button onclick="mostrarRecuperacao()" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                        <button onclick="mostrarRecuperacao()" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
                             Esqueci minha senha
                         </button>
                     </div>
@@ -388,7 +388,7 @@ if ($autenticado && $estabelecimento) {
                 <!-- Footer -->
                 <div class="bg-gray-50 px-8 py-4 text-center border-t border-gray-200">
                     <p class="text-xs text-gray-600">
-                        Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+                        Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
                     </p>
                 </div>
             </div>
@@ -430,7 +430,7 @@ if ($autenticado && $estabelecimento) {
                             type="email" 
                             name="email_recuperacao" 
                             required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             placeholder="seu@email.com"
                         >
                         <p class="text-xs text-gray-500 mt-1">Enviaremos uma nova senha para este email</p>
@@ -440,7 +440,7 @@ if ($autenticado && $estabelecimento) {
                         <button type="button" onclick="fecharRecuperacao()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
                             Cancelar
                         </button>
-                        <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                             Recuperar Senha
                         </button>
                     </div>

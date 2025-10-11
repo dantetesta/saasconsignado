@@ -54,7 +54,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         <?php if (!empty($empresa['logo'])): ?>
                             <img src="<?php echo url('/' . $empresa['logo']); ?>" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
                         <?php else: ?>
-                            <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                                 </svg>
@@ -68,19 +68,19 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                     
                     <!-- Menu Desktop -->
                     <div class="hidden md:ml-10 md:flex md:space-x-1">
-                        <a href="<?php echo url('/index.php'); ?>" class="<?php echo $currentPage === 'index' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
+                        <a href="<?php echo url('/dashboard.php'); ?>" class="<?php echo $currentPage === 'dashboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
                             Dashboard
                         </a>
-                        <a href="<?php echo url('/consignacoes.php'); ?>" class="<?php echo $currentPage === 'consignacoes' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
+                        <a href="<?php echo url('/consignacoes.php'); ?>" class="<?php echo $currentPage === 'consignacoes' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
                             Consignações
                         </a>
-                        <a href="<?php echo url('/produtos.php'); ?>" class="<?php echo $currentPage === 'produtos' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
+                        <a href="<?php echo url('/produtos.php'); ?>" class="<?php echo $currentPage === 'produtos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
                             Produtos
                         </a>
-                        <a href="<?php echo url('/estabelecimentos.php'); ?>" class="<?php echo $currentPage === 'estabelecimentos' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
+                        <a href="<?php echo url('/estabelecimentos.php'); ?>" class="<?php echo $currentPage === 'estabelecimentos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
                             Estabelecimentos
                         </a>
-                        <a href="<?php echo url('/relatorios.php'); ?>" class="<?php echo $currentPage === 'relatorios' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
+                        <a href="<?php echo url('/relatorios.php'); ?>" class="<?php echo $currentPage === 'relatorios' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> px-3 py-2 rounded-lg text-sm font-medium transition">
                             Relatórios
                         </a>
                     </div>
@@ -114,22 +114,6 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         <?php endif; ?>
                     </button>
                     
-                    <!-- Badge do Plano (Desktop) -->
-                    <?php if ($is_free): ?>
-                        <a href="/upgrade.php" class="hidden md:flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-xs font-bold hover:from-yellow-500 hover:to-orange-500 transition shadow-sm">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                            </svg>
-                            FREE - Fazer Upgrade
-                        </a>
-                    <?php else: ?>
-                        <a href="/assinatura.php" class="hidden md:flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-bold hover:from-purple-700 hover:to-pink-700 transition shadow-sm">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            PRO
-                        </a>
-                    <?php endif; ?>
                     
                     <div class="hidden md:block text-right">
                         <p class="text-sm font-medium text-gray-700"><?php echo sanitize($_SESSION['user_name']); ?></p>
@@ -137,7 +121,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     <div class="relative group">
                         <button class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition">
-                            <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-full flex items-center justify-center">
                                 <span class="text-white text-sm font-semibold">
                                     <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
                                 </span>
@@ -148,7 +132,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <div class="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <a href="<?php echo url('/perfil.php'); ?>" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg transition">
                                 <div class="flex items-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,12 +150,24 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                                 </div>
                             </a>
                             <?php if ($is_free): ?>
-                                <a href="<?php echo url('/upgrade.php'); ?>" class="block px-4 py-3 text-sm text-purple-600 hover:bg-purple-50 transition font-medium">
+                                <a href="<?php echo url('/upgrade.php'); ?>" class="block px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 transition font-medium">
                                     <div class="flex items-center">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                         </svg>
-                                        Fazer Upgrade
+                                        <div>
+                                            <div>Fazer Upgrade</div>
+                                            <!-- Label discreto do plano atual -->
+                                            <div class="text-xs text-gray-500 mt-0.5">
+                                                Plano atual: 
+                                                <span class="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-1.5 py-0.5 rounded text-xs font-medium">
+                                                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                    </svg>
+                                                    FREE
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </a>
                             <?php endif; ?>
@@ -200,19 +196,19 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white">
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="<?php echo url('/index.php'); ?>" class="<?php echo $currentPage === 'index' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
+                <a href="<?php echo url('/dashboard.php'); ?>" class="<?php echo $currentPage === 'dashboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
                     Dashboard
                 </a>
-                <a href="<?php echo url('/consignacoes.php'); ?>" class="<?php echo $currentPage === 'consignacoes' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
+                <a href="<?php echo url('/consignacoes.php'); ?>" class="<?php echo $currentPage === 'consignacoes' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
                     Consignações
                 </a>
-                <a href="<?php echo url('/produtos.php'); ?>" class="<?php echo $currentPage === 'produtos' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
+                <a href="<?php echo url('/produtos.php'); ?>" class="<?php echo $currentPage === 'produtos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
                     Produtos
                 </a>
-                <a href="<?php echo url('/estabelecimentos.php'); ?>" class="<?php echo $currentPage === 'estabelecimentos' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
+                <a href="<?php echo url('/estabelecimentos.php'); ?>" class="<?php echo $currentPage === 'estabelecimentos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
                     Estabelecimentos
                 </a>
-                <a href="<?php echo url('/relatorios.php'); ?>" class="<?php echo $currentPage === 'relatorios' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
+                <a href="<?php echo url('/relatorios.php'); ?>" class="<?php echo $currentPage === 'relatorios' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'; ?> block px-3 py-2 rounded-lg text-base font-medium transition">
                     Relatórios
                 </a>
             </div>
@@ -284,7 +280,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     <div id="notificationsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20 p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+            <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white p-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -303,7 +299,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
             <!-- Lista de Notificações -->
             <div id="notificationsList" class="overflow-y-auto max-h-[calc(80vh-120px)] p-6">
                 <div class="text-center py-8">
-                    <div class="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto"></div>
+                    <div class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
                     <p class="text-gray-500 mt-3">Carregando...</p>
                 </div>
             </div>
@@ -336,7 +332,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                             'success': 'bg-green-50 border-green-200 text-green-900',
                             'warning': 'bg-yellow-50 border-yellow-200 text-yellow-900',
                             'error': 'bg-red-50 border-red-200 text-red-900',
-                            'email': 'bg-purple-50 border-purple-200 text-purple-900'
+                            'email': 'bg-blue-50 border-blue-200 text-purple-900'
                         };
                         
                         const tipoIcons = {
@@ -385,7 +381,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         container.innerHTML += `
                             <button 
                                 onclick="markAllAsRead()"
-                                class="w-full mt-4 px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition"
+                                class="w-full mt-4 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
                             >
                                 Marcar todas como lidas
                             </button>

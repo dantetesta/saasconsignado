@@ -157,7 +157,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
             </div>
             <button 
                 onclick="toggleLinkPublico()" 
-                class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" 
+                class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
                 title="Link Público"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +222,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                 <!-- Botão Link Público -->
                 <button 
                     onclick="toggleLinkPublico()" 
-                    class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" 
+                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
                     title="Link Público"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,10 +283,10 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
     <div id="linkPublicoOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40" onclick="toggleLinkPublico()"></div>
     
     <!-- Off-canvas (desliza de cima) -->
-    <div id="linkPublicoOffcanvas" class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-200 p-6 transform -translate-y-full transition-transform duration-300 ease-in-out z-50 shadow-xl">
+    <div id="linkPublicoOffcanvas" class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-blue-200 p-6 transform -translate-y-full transition-transform duration-300 ease-in-out z-50 shadow-xl">
         <div class="flex items-start gap-4">
-            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                 </svg>
             </div>
@@ -310,7 +310,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                         >
                         <button 
                             onclick="copiarLink(event)" 
-                            class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition flex items-center gap-2"
+                            class="px-6 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition flex items-center gap-2"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -426,7 +426,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
         
         if (cor === 'green') {
             // Remover todas as classes de gradiente e adicionar verde sólido
-            btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'hover:from-purple-700', 'hover:to-pink-700');
+            btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'hover:from-blue-700', 'hover:to-emerald-700');
             btn.classList.add('bg-green-600', 'hover:bg-green-700');
         }
         
@@ -796,7 +796,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                                         name="data_pagamento" 
                                         required
                                         value="<?php echo date('Y-m-d'); ?>"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
                                 </div>
                                 <div>
@@ -805,7 +805,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                                         type="text" 
                                         id="valor_pago_display"
                                         required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="R$ 0,00"
                                         maxlength="15"
                                     >
@@ -817,7 +817,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                                     <select 
                                         name="forma_pagamento" 
                                         required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
                                         <option value="dinheiro">Dinheiro</option>
                                         <option value="pix">PIX</option>
@@ -832,7 +832,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
                                     <input 
                                         type="text" 
                                         name="observacoes_pagamento"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Informações adicionais"
                                     >
                                 </div>
@@ -907,7 +907,7 @@ $saldo_pendente = max(0, $valor_total - $valor_pago);
             <!-- Ações -->
             <div class="pt-6 border-t border-gray-200 space-y-2">
                 <?php if ($consignacao['status'] !== 'finalizada' && $consignacao['status'] !== 'cancelada'): ?>
-                    <a href="?action=update&id=<?php echo $consignacao['id']; ?>" class="block w-full px-4 py-2 bg-purple-600 text-white text-center font-medium rounded-lg hover:bg-purple-700 transition">
+                    <a href="?action=update&id=<?php echo $consignacao['id']; ?>" class="block w-full px-4 py-2 bg-blue-600 text-white text-center font-medium rounded-lg hover:bg-blue-700 transition">
                         Atualizar Vendas
                     </a>
                 <?php endif; ?>

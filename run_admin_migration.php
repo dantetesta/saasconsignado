@@ -156,7 +156,7 @@ try {
     
     // Botões de ação
     echo "<div class='flex gap-4'>
-            <a href='/admin/login.php' class='flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition text-center'>
+            <a href='/admin/login.php' class='flex-1 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition text-center'>
                 Acessar Painel Admin
             </a>
             <a href='/' class='px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition text-center'>
@@ -195,7 +195,7 @@ try {
 
 echo "
             <div class='mt-8 text-center text-sm text-gray-500'>
-                <p>Desenvolvido por <a href='https://dantetesta.com.br' target='_blank' class='text-purple-600 hover:underline'>Dante Testa</a></p>
+                <p>Desenvolvido por <a href='https://dantetesta.com.br' target='_blank' class='text-blue-600 hover:underline'>Dante Testa</a></p>
             </div>
         </div>
     </div>

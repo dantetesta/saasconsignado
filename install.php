@@ -19,7 +19,7 @@ if (file_exists(__DIR__ . '/.installed')) {
             body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f3f4f6; }
             .container { text-align: center; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
             h1 { color: #dc2626; }
-            a { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #9333ea; color: white; text-decoration: none; border-radius: 5px; }
+            a { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; }
         </style>
     </head>
     <body>
@@ -149,11 +149,11 @@ class Database {
         .form-group { margin-bottom: 20px; }
         label { display: block; color: #374151; font-weight: 500; margin-bottom: 8px; font-size: 14px; }
         input { width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
-        input:focus { outline: none; border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1); }
-        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
         .btn:hover { transform: translateY(-2px); }
         .error { background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; }
-        .section-title { color: #9333ea; font-weight: 600; margin-top: 30px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f3f4f6; }
+        .section-title { color: #2563eb; font-weight: 600; margin-top: 30px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f3f4f6; }
         .help-text { font-size: 12px; color: #6b7280; margin-top: 4px; }
         .logo { text-align: center; margin-bottom: 30px; }
         .logo svg { width: 60px; height: 60px; }
@@ -162,7 +162,7 @@ class Database {
 <body>
     <div class="container">
         <div class="logo">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #9333ea;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2563eb;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
             </svg>
         </div>

@@ -120,7 +120,7 @@ $pageTitle = 'Logs Administrativos';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -165,7 +165,7 @@ $pageTitle = 'Logs Administrativos';
                 <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     ⚙️ Configurações
                 </a>
-                <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     📝 Logs
                 </a>
                 <a href="/admin/monitor_api.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
@@ -203,7 +203,7 @@ $pageTitle = 'Logs Administrativos';
                                 type="date" 
                                 name="data_inicio" 
                                 value="<?php echo htmlspecialchars($filters['data_inicio']); ?>"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                         </div>
                         <div>
@@ -212,12 +212,12 @@ $pageTitle = 'Logs Administrativos';
                                 type="date" 
                                 name="data_fim" 
                                 value="<?php echo htmlspecialchars($filters['data_fim']); ?>"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                             Filtrar
                         </button>
                         <a href="/admin/logs.php" class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
@@ -285,7 +285,7 @@ $pageTitle = 'Logs Administrativos';
                                     type="checkbox" 
                                     id="selectAll" 
                                     onclick="toggleSelectAll(this)"
-                                    class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                 >
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Data/Hora</th>
@@ -304,7 +304,7 @@ $pageTitle = 'Logs Administrativos';
                                         type="checkbox" 
                                         name="log_checkbox" 
                                         value="<?php echo $log['id']; ?>"
-                                        class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                        class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                     >
                                 </td>
                                 

@@ -67,7 +67,7 @@ $pageTitle = 'Configurações do Sistema';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -109,7 +109,7 @@ $pageTitle = 'Configurações do Sistema';
                 <a href="/admin/gateways.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     🔗 Gateways
                 </a>
-                <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     ⚙️ Configurações
                 </a>
                 <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
@@ -154,7 +154,7 @@ $pageTitle = 'Configurações do Sistema';
                 <!-- Card por Grupo -->
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
                     <!-- Header do Grupo -->
-                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-4">
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-blue-200 px-6 py-4">
                         <h2 class="text-xl font-bold text-purple-900">
                             <?php 
                             $icones = [
@@ -191,7 +191,7 @@ $pageTitle = 'Configurações do Sistema';
                                                 <?php echo $config['valor'] == '1' ? 'checked' : ''; ?>
                                                 class="sr-only peer"
                                             >
-                                            <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                                            <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
                                             <span class="ml-3 text-sm font-medium text-gray-700">
                                                 <?php echo $config['valor'] == '1' ? 'Ativado' : 'Desativado'; ?>
                                             </span>
@@ -210,7 +210,7 @@ $pageTitle = 'Configurações do Sistema';
                                                 value="<?php echo htmlspecialchars($config['valor']); ?>"
                                                 step="<?php echo strpos($config['chave'], 'preco') !== false ? '0.01' : '1'; ?>"
                                                 min="0"
-                                                class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-bold text-lg"
+                                                class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-bold text-lg"
                                             >
                                             
                                             <?php if (strpos($config['chave'], 'dias') !== false): ?>
@@ -224,7 +224,7 @@ $pageTitle = 'Configurações do Sistema';
                                             type="text" 
                                             name="<?php echo $config['chave']; ?>" 
                                             value="<?php echo htmlspecialchars($config['valor']); ?>"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         >
                                     <?php endif; ?>
                                 </div>
@@ -245,7 +245,7 @@ $pageTitle = 'Configurações do Sistema';
                 <button 
                     type="submit" 
                     name="salvar"
-                    class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-lg"
+                    class="px-8 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-lg"
                 >
                     💾 Salvar Configurações
                 </button>

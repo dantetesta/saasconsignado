@@ -33,7 +33,7 @@ $menuItems = [
                 <?php 
                 $isActive = ($currentPage === $key);
                 $classes = $isActive 
-                    ? 'px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap'
+                    ? 'px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap'
                     : 'px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap';
                 ?>
                 <a href="<?php echo $item['url']; ?>" class="<?php echo $classes; ?>">

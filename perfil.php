@@ -163,7 +163,7 @@ include 'includes/header.php';
                         id="nome" 
                         name="nome" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['nome']); ?>"
                     >
                 </div>
@@ -177,7 +177,7 @@ include 'includes/header.php';
                         id="email" 
                         name="email" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['email']); ?>"
                     >
                 </div>
@@ -191,7 +191,7 @@ include 'includes/header.php';
                         id="nome_empresa" 
                         name="nome_empresa" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['nome_empresa'] ?? ''); ?>"
                     >
                 </div>
@@ -204,7 +204,7 @@ include 'includes/header.php';
                         type="text" 
                         id="documento" 
                         name="documento" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['documento'] ?? ''); ?>"
                         placeholder="000.000.000-00 ou 00.000.000/0000-00"
                     >
@@ -218,7 +218,7 @@ include 'includes/header.php';
                         type="email" 
                         id="email_remetente" 
                         name="email_remetente" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['email_remetente'] ?? ''); ?>"
                         placeholder="contato@suaempresa.com"
                     >
@@ -233,14 +233,14 @@ include 'includes/header.php';
                         type="tel" 
                         id="whatsapp" 
                         name="whatsapp" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo sanitize($usuario['whatsapp'] ?? ''); ?>"
                     >
                     <p class="text-xs text-gray-500 mt-1">Será exibido na página pública de consulta</p>
                 </div>
 
                 <div class="pt-4">
-                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                         Salvar Alterações
                     </button>
                 </div>
@@ -263,7 +263,7 @@ include 'includes/header.php';
                         id="senha_atual" 
                         name="senha_atual" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                 </div>
 
@@ -277,7 +277,7 @@ include 'includes/header.php';
                         name="senha_nova" 
                         required
                         minlength="6"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                     <p class="text-xs text-gray-500 mt-1">Mínimo de 6 caracteres</p>
                 </div>
@@ -292,12 +292,12 @@ include 'includes/header.php';
                         name="senha_confirma" 
                         required
                         minlength="6"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                 </div>
 
                 <div class="pt-4">
-                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                         Alterar Senha
                     </button>
                 </div>
@@ -314,7 +314,7 @@ include 'includes/header.php';
                 <?php if (!empty($usuario['logo'])): ?>
                     <img src="<?php echo url('/' . $usuario['logo']); ?>" alt="Logo" class="w-32 h-32 mx-auto rounded-lg object-cover border-2 border-gray-200">
                 <?php else: ?>
-                    <div class="w-32 h-32 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mx-auto">
+                    <div class="w-32 h-32 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center mx-auto">
                         <span class="text-white text-5xl font-bold">
                             <?php echo strtoupper(substr($usuario['nome_empresa'] ?? $usuario['nome'], 0, 1)); ?>
                         </span>
@@ -324,7 +324,7 @@ include 'includes/header.php';
 
             <div class="space-y-4">
                 <input type="file" id="logoInput" accept="image/*" class="hidden">
-                <button onclick="document.getElementById('logoInput').click()" class="w-full px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                <button onclick="document.getElementById('logoInput').click()" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                     <?php echo !empty($usuario['logo']) ? 'Alterar Logo' : 'Adicionar Logo'; ?>
                 </button>
                 <p class="text-xs text-gray-500 text-center">Formato quadrado 500x500px</p>
@@ -372,7 +372,7 @@ include 'includes/header.php';
             <button onclick="fecharCropper()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
                 Cancelar
             </button>
-            <button onclick="salvarLogo()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            <button onclick="salvarLogo()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Salvar Logo
             </button>
         </div>

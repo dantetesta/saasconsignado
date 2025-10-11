@@ -64,7 +64,7 @@ $pageTitle = 'Limpeza de Cache';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -115,7 +115,7 @@ $pageTitle = 'Limpeza de Cache';
                 
                 <div class="space-y-4 mb-6">
                     <label class="flex items-center gap-3">
-                        <input type="checkbox" name="clear_payments" checked class="w-4 h-4 text-purple-600 rounded">
+                        <input type="checkbox" name="clear_payments" checked class="w-4 h-4 text-blue-600 rounded">
                         <div>
                             <span class="font-medium text-gray-900">Cache de Pagamentos</span>
                             <p class="text-sm text-gray-600">Limpa o cache de verificação de pagamentos (recomendado)</p>
@@ -123,7 +123,7 @@ $pageTitle = 'Limpeza de Cache';
                     </label>
                     
                     <label class="flex items-center gap-3">
-                        <input type="checkbox" name="clear_sessions" class="w-4 h-4 text-purple-600 rounded">
+                        <input type="checkbox" name="clear_sessions" class="w-4 h-4 text-blue-600 rounded">
                         <div>
                             <span class="font-medium text-gray-900">Sessões de Usuário</span>
                             <p class="text-sm text-gray-600">Força logout de todos os usuários (use com cuidado)</p>
@@ -131,7 +131,7 @@ $pageTitle = 'Limpeza de Cache';
                     </label>
                     
                     <label class="flex items-center gap-3">
-                        <input type="checkbox" name="clear_logs" class="w-4 h-4 text-purple-600 rounded">
+                        <input type="checkbox" name="clear_logs" class="w-4 h-4 text-blue-600 rounded">
                         <div>
                             <span class="font-medium text-gray-900">Logs Temporários</span>
                             <p class="text-sm text-gray-600">Limpa arquivos de log temporários</p>

@@ -56,7 +56,7 @@ require_once 'config/config.php';
             </div>
 
             <!-- Sessão -->
-            <div class="mb-6 p-4 bg-purple-50 border-purple-200 border-2 rounded-lg">
+            <div class="mb-6 p-4 bg-blue-50 border-blue-200 border-2 rounded-lg">
                 <h2 class="text-xl font-bold mb-2">🔐 Configurações de Sessão</h2>
                 <div class="space-y-2 text-sm">
                     <p><strong>session.cookie_httponly:</strong> <?php echo ini_get('session.cookie_httponly') ? '✅ Ativo' : '❌ Inativo'; ?></p>
@@ -114,7 +114,7 @@ require_once 'config/config.php';
 
             <!-- Ações -->
             <div class="mt-8 flex gap-4">
-                <a href="/login.php" class="px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition">
+                <a href="/login.php" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
                     ← Voltar ao Login
                 </a>
                 <button onclick="location.reload()" class="px-6 py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700 transition">
@@ -126,7 +126,7 @@ require_once 'config/config.php';
         <!-- Footer -->
         <div class="mt-8 text-center text-gray-600 text-sm">
             <p>🔒 Debug de Segurança - Sistema de Consignados</p>
-            <p>Desenvolvido por <a href="https://dantetesta.com.br" class="text-purple-600 hover:underline">Dante Testa</a></p>
+            <p>Desenvolvido por <a href="https://dantetesta.com.br" class="text-blue-600 hover:underline">Dante Testa</a></p>
         </div>
     </div>
 </body>

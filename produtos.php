@@ -133,7 +133,7 @@ include 'includes/header.php';
         <p class="text-gray-600 mt-1">Gerencie seus produtos consignados</p>
     </div>
     <?php if (!$showForm): ?>
-        <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
+        <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-md">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -170,7 +170,7 @@ include 'includes/header.php';
                 <div class="lg:col-span-2 space-y-6">
                     <div class="bg-white rounded-lg border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             Dados do Produto
@@ -187,7 +187,7 @@ include 'includes/header.php';
                                     id="nome" 
                                     name="nome" 
                                     required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     value="<?php echo $editProduto ? sanitize($editProduto['nome']) : ''; ?>"
                                     placeholder="Ex: Pipoca Gourmet - Caramelo"
                                 >
@@ -202,7 +202,7 @@ include 'includes/header.php';
                                     id="descricao" 
                                     name="descricao" 
                                     rows="3"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Descrição detalhada do produto"
                                 ><?php echo $editProduto ? sanitize($editProduto['descricao']) : ''; ?></textarea>
                             </div>
@@ -218,7 +218,7 @@ include 'includes/header.php';
                                         type="text" 
                                         id="preco_venda_display"
                                         required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="R$ 0,00"
                                         maxlength="20"
                                     >
@@ -233,7 +233,7 @@ include 'includes/header.php';
                                     <input 
                                         type="text" 
                                         id="preco_custo_display"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="R$ 0,00"
                                         maxlength="20"
                                     >
@@ -254,7 +254,7 @@ include 'includes/header.php';
                                         name="estoque_total" 
                                         min="0"
                                         required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value="<?php echo $editProduto ? $editProduto['estoque_total'] : ''; ?>"
                                         placeholder="0"
                                     >
@@ -271,7 +271,7 @@ include 'includes/header.php';
                                         name="estoque_minimo" 
                                         min="0"
                                         required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value="<?php echo $editProduto ? $editProduto['estoque_minimo'] : '10'; ?>"
                                         placeholder="10"
                                     >
@@ -307,7 +307,7 @@ include 'includes/header.php';
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             Foto do Produto
@@ -336,7 +336,7 @@ include 'includes/header.php';
                         >
                         <input type="hidden" id="fotoCropped" name="foto_cropped">
                         
-                        <label for="fotoInput" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg cursor-pointer hover:from-purple-700 hover:to-pink-700 transition">
+                        <label for="fotoInput" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-medium rounded-lg cursor-pointer hover:from-blue-700 hover:to-emerald-700 transition">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
@@ -371,7 +371,7 @@ include 'includes/header.php';
                 <a href="/produtos.php" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                     Cancelar
                 </a>
-                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition">
                     <?php echo $editProduto ? 'Atualizar' : 'Cadastrar'; ?>
                 </button>
             </div>
@@ -428,7 +428,7 @@ include 'includes/header.php';
                     <button type="button" onclick="closeCropModal()" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                         Cancelar
                     </button>
-                    <button type="button" onclick="applyCrop()" class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                    <button type="button" onclick="applyCrop()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition">
                         Aplicar Crop
                     </button>
                 </div>
@@ -445,11 +445,11 @@ include 'includes/header.php';
                     type="text" 
                     name="search" 
                     placeholder="Buscar por nome ou descrição..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value="<?php echo sanitize($search); ?>"
                 >
             </div>
-            <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                 Buscar
             </button>
             <?php if (!empty($search)): ?>
@@ -468,7 +468,7 @@ include 'includes/header.php';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                 </svg>
                 <p class="text-gray-500 mb-4">Nenhum produto encontrado</p>
-                <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -536,7 +536,7 @@ include 'includes/header.php';
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm font-medium">
-                                    <a href="?action=edit&id=<?php echo $produto['id']; ?>" class="text-purple-600 hover:text-purple-900 mr-3">Editar</a>
+                                    <a href="?action=edit&id=<?php echo $produto['id']; ?>" class="text-blue-600 hover:text-purple-900 mr-3">Editar</a>
                                     <button onclick="confirmDelete(<?php echo $produto['id']; ?>, '<?php echo addslashes($produto['nome']); ?>')" class="text-red-600 hover:text-red-900">Excluir</button>
                                 </td>
                             </tr>
@@ -607,7 +607,7 @@ include 'includes/header.php';
                         </div>
                         
                         <div class="flex gap-2">
-                            <a href="?action=edit&id=<?php echo $produto['id']; ?>" class="flex-1 px-4 py-2 bg-purple-600 text-white text-center rounded-lg hover:bg-purple-700 transition text-sm font-medium">
+                            <a href="?action=edit&id=<?php echo $produto['id']; ?>" class="flex-1 px-4 py-2 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition text-sm font-medium">
                                 Editar
                             </a>
                             <button onclick="confirmDelete(<?php echo $produto['id']; ?>, '<?php echo addslashes($produto['nome']); ?>')" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm font-medium">

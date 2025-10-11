@@ -280,7 +280,7 @@ include 'includes/header.php';
                             id="produto_id" 
                             name="produto_id" 
                             required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="">Selecione um produto</option>
                             <?php foreach ($produtos as $prod): ?>
@@ -301,7 +301,7 @@ include 'includes/header.php';
                             name="quantidade" 
                             min="1"
                             required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="0"
                         >
                     </div>
@@ -315,7 +315,7 @@ include 'includes/header.php';
                             name="data_movimentacao" 
                             required
                             value="<?php echo date('Y-m-d'); ?>"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                     </div>
                     
@@ -326,13 +326,13 @@ include 'includes/header.php';
                             id="observacoes" 
                             name="observacoes" 
                             rows="2"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Informações adicionais (opcional)"
                         ></textarea>
                     </div>
                 </div>
                 
-                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition">
                     ✓ Registrar Movimentação
                 </button>
             </form>

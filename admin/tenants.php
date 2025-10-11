@@ -134,7 +134,7 @@ $pageTitle = 'Gestão de Assinantes';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -164,7 +164,7 @@ $pageTitle = 'Gestão de Assinantes';
                 <a href="/admin/index.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     📊 Dashboard
                 </a>
-                <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     👥 Assinantes
                 </a>
                 <a href="/admin/financeiro.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
@@ -213,19 +213,19 @@ $pageTitle = 'Gestão de Assinantes';
                         name="search" 
                         placeholder="🔍 Buscar por nome ou email..."
                         value="<?php echo htmlspecialchars($filters['search']); ?>"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                 </div>
 
                 <!-- Filtro Plano -->
-                <select name="plano" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                <select name="plano" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos os planos</option>
                     <option value="free" <?php echo $filters['plano'] === 'free' ? 'selected' : ''; ?>>Free</option>
                     <option value="pro" <?php echo $filters['plano'] === 'pro' ? 'selected' : ''; ?>>Pro</option>
                 </select>
 
                 <!-- Filtro Status -->
-                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos os status</option>
                     <option value="ativo" <?php echo $filters['status'] === 'ativo' ? 'selected' : ''; ?>>Ativo</option>
                     <option value="suspenso" <?php echo $filters['status'] === 'suspenso' ? 'selected' : ''; ?>>Suspenso</option>
@@ -233,7 +233,7 @@ $pageTitle = 'Gestão de Assinantes';
                     <option value="trial" <?php echo $filters['status'] === 'trial' ? 'selected' : ''; ?>>Trial</option>
                 </select>
 
-                <button type="submit" class="md:col-span-4 px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                <button type="submit" class="md:col-span-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                     Filtrar
                 </button>
             </form>
@@ -268,7 +268,7 @@ $pageTitle = 'Gestão de Assinantes';
                                 <!-- Plano -->
                                 <td class="px-6 py-4 text-center">
                                     <?php if ($tenant['plano'] === 'pro'): ?>
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">
                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                             </svg>
@@ -358,7 +358,7 @@ $pageTitle = 'Gestão de Assinantes';
                                         <!-- Alterar Plano -->
                                         <button 
                                             onclick="changePlan(<?php echo $tenant['id']; ?>, '<?php echo $tenant['plano']; ?>')"
-                                            class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
+                                            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
                                             title="Alterar Plano"
                                         >
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

@@ -104,7 +104,7 @@ include 'includes/header.php';
                 type="date" 
                 name="data_inicio" 
                 value="<?php echo $data_inicio; ?>"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
         </div>
         <div class="flex-1">
@@ -113,11 +113,11 @@ include 'includes/header.php';
                 type="date" 
                 name="data_fim" 
                 value="<?php echo $data_fim; ?>"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
         </div>
         <div class="flex items-end">
-            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                 Filtrar
             </button>
         </div>
@@ -174,8 +174,8 @@ include 'includes/header.php';
                 <p class="text-sm font-medium text-gray-600">Consignações</p>
                 <p class="text-2xl font-bold text-gray-900 mt-2"><?php echo $resumo['total_consignacoes'] ?? 0; ?></p>
             </div>
-            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>

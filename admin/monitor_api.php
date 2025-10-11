@@ -52,7 +52,7 @@ $pageTitle = 'Monitor da API';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -100,7 +100,7 @@ $pageTitle = 'Monitor da API';
                 <a href="/admin/logs.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     📝 Logs
                 </a>
-                <a href="/admin/monitor_api.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/monitor_api.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     🔍 Monitor
                 </a>
             </nav>
@@ -208,13 +208,13 @@ $pageTitle = 'Monitor da API';
 
         <!-- Teste da API -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-            <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-4">
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-blue-200 px-6 py-4">
                 <h2 class="text-xl font-bold text-purple-900">🧪 Teste da API</h2>
             </div>
             <div class="p-6">
                 <button 
                     onclick="testarAPI()"
-                    class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-lg"
+                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-lg"
                 >
                     🔍 Testar Verificação de Pagamento
                 </button>

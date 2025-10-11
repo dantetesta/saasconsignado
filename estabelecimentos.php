@@ -144,7 +144,7 @@ include 'includes/header.php';
     </div>
     <?php if (!$showForm): ?>
         <?php if ($pode_criar): ?>
-            <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
+            <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-md">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -206,7 +206,7 @@ include 'includes/header.php';
                         id="nome" 
                         name="nome" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo $editEstabelecimento ? sanitize($editEstabelecimento['nome']) : ''; ?>"
                         placeholder="Ex: Padaria do João"
                     >
@@ -221,7 +221,7 @@ include 'includes/header.php';
                         type="text" 
                         id="responsavel" 
                         name="responsavel"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo $editEstabelecimento && !empty($editEstabelecimento['responsavel']) ? sanitize($editEstabelecimento['responsavel']) : ''; ?>"
                         placeholder="Nome do responsável"
                     >
@@ -236,7 +236,7 @@ include 'includes/header.php';
                         type="email" 
                         id="email" 
                         name="email"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo $editEstabelecimento && !empty($editEstabelecimento['email']) ? sanitize($editEstabelecimento['email']) : ''; ?>"
                         placeholder="contato@estabelecimento.com"
                     >
@@ -254,7 +254,7 @@ include 'includes/header.php';
                         type="text" 
                         id="telefone" 
                         name="telefone"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo $editEstabelecimento && !empty($editEstabelecimento['telefone']) ? sanitize($editEstabelecimento['telefone']) : ''; ?>"
                         placeholder="(11) 98765-4321"
                     >
@@ -289,7 +289,7 @@ include 'includes/header.php';
                         type="text" 
                         id="endereco" 
                         name="endereco"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value="<?php echo $editEstabelecimento && !empty($editEstabelecimento['endereco']) ? sanitize($editEstabelecimento['endereco']) : ''; ?>"
                         placeholder="Rua, número, bairro, cidade"
                     >
@@ -306,7 +306,7 @@ include 'includes/header.php';
                             type="password" 
                             id="senha_acesso" 
                             name="senha_acesso"
-                            class="w-full px-4 py-2 border border-purple-300 bg-purple-50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-blue-300 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="<?php echo $editEstabelecimento ? 'Deixe em branco para manter a senha atual' : 'Digite uma senha para o cliente acessar'; ?>"
                         >
                         <button 
@@ -334,7 +334,7 @@ include 'includes/header.php';
                         id="observacoes" 
                         name="observacoes" 
                         rows="3"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Informações adicionais sobre o estabelecimento"
                     ><?php echo $editEstabelecimento && !empty($editEstabelecimento['observacoes']) ? sanitize($editEstabelecimento['observacoes']) : ''; ?></textarea>
                 </div>
@@ -386,7 +386,7 @@ include 'includes/header.php';
                 <a href="/estabelecimentos.php" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                     Cancelar
                 </a>
-                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition">
                     <?php echo $editEstabelecimento ? 'Atualizar' : 'Cadastrar'; ?>
                 </button>
             </div>
@@ -401,11 +401,11 @@ include 'includes/header.php';
                     type="text" 
                     name="search" 
                     placeholder="Buscar por nome ou responsável..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value="<?php echo sanitize($search); ?>"
                 >
             </div>
-            <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                 Buscar
             </button>
             <?php if (!empty($search)): ?>
@@ -424,7 +424,7 @@ include 'includes/header.php';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
                 <p class="text-gray-500 mb-4">Nenhum estabelecimento encontrado</p>
-                <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                <a href="?action=new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -479,7 +479,7 @@ include 'includes/header.php';
                                 <p class="text-xs text-gray-500">Total</p>
                             </div>
                             <div class="text-center flex-1">
-                                <p class="text-2xl font-bold text-purple-600"><?php echo $estab['consignacoes_ativas']; ?></p>
+                                <p class="text-2xl font-bold text-blue-600"><?php echo $estab['consignacoes_ativas']; ?></p>
                                 <p class="text-xs text-gray-500">Ativas</p>
                             </div>
                         </div>

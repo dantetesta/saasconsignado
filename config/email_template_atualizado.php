@@ -40,7 +40,7 @@ function getEmailTemplate($dados) {
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
             .header {
-                background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+                background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
                 color: white;
                 padding: 30px 20px;
                 text-align: center;
@@ -54,14 +54,14 @@ function getEmailTemplate($dados) {
             }
             .info-box {
                 background: #f9fafb;
-                border-left: 4px solid #9333ea;
+                border-left: 4px solid #2563eb;
                 padding: 15px;
                 margin: 20px 0;
                 border-radius: 4px;
             }
             .info-box h3 {
                 margin: 0 0 10px 0;
-                color: #9333ea;
+                color: #2563eb;
                 font-size: 16px;
             }
             .product-list {
@@ -81,22 +81,22 @@ function getEmailTemplate($dados) {
             .button {
                 display: inline-block;
                 background: #ffffff;
-                color: #9333ea;
+                color: #2563eb;
                 text-decoration: none;
                 padding: 16px 40px;
                 border-radius: 12px;
                 font-weight: bold;
                 text-align: center;
                 margin: 20px 0;
-                border: 3px solid #9333ea;
+                border: 3px solid #2563eb;
                 font-size: 16px;
                 transition: all 0.3s ease;
             }
             .button:hover {
-                background: #9333ea;
+                background: #2563eb;
                 color: #ffffff;
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
             }
             .button-container {
                 text-align: center;
@@ -179,7 +179,7 @@ function getEmailTemplate($dados) {
             
             <div class="footer">
                 <p>Este é um email automático do Sistema de Consignados</p>
-                <p>Desenvolvido por <a href="https://dantetesta.com.br" style="color: #9333ea;">Dante Testa</a></p>
+                <p>Desenvolvido por <a href="https://dantetesta.com.br" style="color: #2563eb;">Dante Testa</a></p>
                 <p>Versão 1.2.2</p>
             </div>
         </div>

@@ -76,7 +76,7 @@ $pageTitle = 'Gateways de Pagamento';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -115,7 +115,7 @@ $pageTitle = 'Gateways de Pagamento';
                 <a href="/admin/pagamentos.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
                     💳 Pagamentos
                 </a>
-                <a href="/admin/gateways.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/gateways.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     🔗 Gateways
                 </a>
                 <a href="/admin/configuracoes.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
@@ -229,7 +229,7 @@ $pageTitle = 'Gateways de Pagamento';
                         
                         <button 
                             onclick="openConfigModal(<?php echo $gateway['id']; ?>, '<?php echo htmlspecialchars($gateway['nome']); ?>', <?php echo htmlspecialchars(json_encode($gateway['configuracao'])); ?>)"
-                            class="float-right px-3 py-1 text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
+                            class="float-right px-3 py-1 text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
                         >
                             ⚙️ Configurar
                         </button>
@@ -245,23 +245,23 @@ $pageTitle = 'Gateways de Pagamento';
         </div>
 
         <!-- Informações Adicionais -->
-        <div class="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6">
+        <div class="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 border border-blue-200 rounded-xl p-6">
             <h3 class="font-bold text-purple-900 mb-3">📌 Próximos Passos:</h3>
             <ul class="space-y-2 text-sm text-purple-800">
                 <li class="flex items-start gap-2">
-                    <span class="text-purple-600">1.</span>
+                    <span class="text-blue-600">1.</span>
                     <span>Ative o gateway que deseja utilizar usando o switcher acima</span>
                 </li>
                 <li class="flex items-start gap-2">
-                    <span class="text-purple-600">2.</span>
+                    <span class="text-blue-600">2.</span>
                     <span>Configure as credenciais de API (em desenvolvimento)</span>
                 </li>
                 <li class="flex items-start gap-2">
-                    <span class="text-purple-600">3.</span>
+                    <span class="text-blue-600">3.</span>
                     <span>Teste a integração antes de disponibilizar para os clientes</span>
                 </li>
                 <li class="flex items-start gap-2">
-                    <span class="text-purple-600">4.</span>
+                    <span class="text-blue-600">4.</span>
                     <span>Os métodos de pagamento serão exibidos automaticamente no checkout</span>
                 </li>
             </ul>
@@ -277,11 +277,11 @@ $pageTitle = 'Gateways de Pagamento';
                 <input type="hidden" name="gateway_id" id="modal_gateway_id">
                 
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-t-2xl">
+                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white p-6 rounded-t-2xl">
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-2xl font-bold mb-1">Configurar Gateway</h2>
-                            <p class="text-purple-100 text-sm" id="modal_gateway_name"></p>
+                            <p class="text-blue-100 text-sm" id="modal_gateway_name"></p>
                         </div>
                         <button type="button" onclick="closeConfigModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +305,7 @@ $pageTitle = 'Gateways de Pagamento';
                             id="modal_api_key"
                             required
                             placeholder="Ex: 6476a737-7211-4e7c-ba1f-639eff09e270"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
                         >
                         <p class="text-xs text-gray-500 mt-2">
                             💡 Obtenha sua API Key no painel do gateway de pagamento
@@ -331,7 +331,7 @@ $pageTitle = 'Gateways de Pagamento';
                                     <div class="text-xs text-gray-600">Para desenvolvimento</div>
                                 </div>
                                 <div class="hidden peer-checked:block">
-                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
@@ -351,7 +351,7 @@ $pageTitle = 'Gateways de Pagamento';
                                     <div class="text-xs text-gray-600">Pagamentos reais</div>
                                 </div>
                                 <div class="hidden peer-checked:block">
-                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
@@ -383,7 +383,7 @@ $pageTitle = 'Gateways de Pagamento';
                     </button>
                     <button 
                         type="submit"
-                        class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition"
+                        class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition"
                     >
                         💾 Salvar Configuração
                     </button>

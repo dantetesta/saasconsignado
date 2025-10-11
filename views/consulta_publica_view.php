@@ -3,7 +3,7 @@
  * Visualização Detalhada de Consignação - Consulta Pública
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.2.0
+ * @version 1.2.1
  */
 ?>
 
@@ -70,7 +70,7 @@
 
             <!-- Produtos -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-emerald-50">
                     <div class="flex items-center justify-between">
                         <h2 class="text-lg font-semibold text-gray-900">Produtos Consignados</h2>
                         <?php if ($total_pendente > 0): ?>
@@ -292,7 +292,7 @@
                 <?php if (!empty($estabelecimento['logo_empresa'])): ?>
                     <img src="<?php echo (defined('BASE_PATH') ? BASE_PATH : '') . '/' . $estabelecimento['logo_empresa']; ?>" alt="Logo" class="w-16 h-16 rounded-lg object-cover">
                 <?php else: ?>
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
                         <span class="text-white text-2xl font-bold">
                             <?php echo strtoupper(substr($estabelecimento['nome_empresa'] ?? 'C', 0, 1)); ?>
                         </span>
@@ -302,7 +302,7 @@
                 <div>
                     <h3 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($estabelecimento['nome_empresa'] ?? 'Consignados'); ?></h3>
                     <?php if (!empty($estabelecimento['email_empresa'])): ?>
-                        <a href="mailto:<?php echo htmlspecialchars($estabelecimento['email_empresa']); ?>" class="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1">
+                        <a href="mailto:<?php echo htmlspecialchars($estabelecimento['email_empresa']); ?>" class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
@@ -333,7 +333,7 @@
     <!-- Footer -->
     <div class="mt-12 text-center">
         <p class="text-sm text-gray-600">
-            Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+            Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
         </p>
         <p class="text-xs text-gray-500 mt-2">Versão 1.2.0</p>
     </div>

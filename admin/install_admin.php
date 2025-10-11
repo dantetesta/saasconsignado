@@ -54,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
     <div class="w-full max-w-2xl">
         <div class="bg-white rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                    <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/>
                     </svg>
                 </div>
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
                 </div>
 
                 <div class="flex gap-4">
-                    <a href="/admin/login.php" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition text-center">
+                    <a href="/admin/login.php" class="flex-1 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition text-center">
                         Acessar Painel Admin
                     </a>
                     <a href="/" class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition text-center">
@@ -122,14 +122,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
                     <button 
                         type="submit" 
                         name="install"
-                        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105"
+                        class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold py-4 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition transform hover:scale-105"
                     >
                         Instalar Painel Administrativo
                     </button>
                 </form>
 
                 <p class="text-center text-sm text-gray-500 mt-4">
-                    Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:underline">Dante Testa</a>
+                    Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:underline">Dante Testa</a>
                 </p>
             <?php endif; ?>
         </div>

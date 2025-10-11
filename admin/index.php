@@ -33,7 +33,7 @@ $pageTitle = 'Dashboard Admin';
 <body class="bg-gray-50">
 
     <!-- Header Admin -->
-    <nav class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
@@ -60,7 +60,7 @@ $pageTitle = 'Dashboard Admin';
     <div class="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4">
             <nav class="flex gap-1 overflow-x-auto">
-                <a href="/admin/index.php" class="px-4 py-3 text-sm font-medium text-purple-600 border-b-2 border-purple-600 whitespace-nowrap">
+                <a href="/admin/index.php" class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                     📊 Dashboard
                 </a>
                 <a href="/admin/tenants.php" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 whitespace-nowrap">
@@ -122,11 +122,11 @@ $pageTitle = 'Dashboard Admin';
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-sm font-medium text-gray-600">Plano Pro</h3>
-                    <svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                 </div>
-                <p class="text-3xl font-bold text-purple-600"><?php echo $metrics['plano_pro']; ?></p>
+                <p class="text-3xl font-bold text-blue-600"><?php echo $metrics['plano_pro']; ?></p>
                 <p class="text-xs text-gray-500 mt-1">Assinantes pagantes</p>
             </div>
 
@@ -199,8 +199,8 @@ $pageTitle = 'Dashboard Admin';
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <a href="/admin/tenants.php" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition group">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
-                        <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                         </svg>
                     </div>
@@ -243,7 +243,7 @@ $pageTitle = 'Dashboard Admin';
             <a href="/admin/logs.php" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition group">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
-                        <svg class="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
                         </svg>
                     </div>
@@ -296,10 +296,10 @@ $pageTitle = 'Dashboard Admin';
                     : 0;
                 ?>
                 <div class="text-center">
-                    <p class="text-4xl font-bold text-purple-600"><?php echo number_format($taxaConversao, 1); ?>%</p>
+                    <p class="text-4xl font-bold text-blue-600"><?php echo number_format($taxaConversao, 1); ?>%</p>
                     <p class="text-sm text-gray-600 mt-2">Free → Pro</p>
                     <div class="mt-4 bg-gray-200 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all" style="width: <?php echo $taxaConversao; ?>%"></div>
+                        <div class="bg-gradient-to-r from-blue-600 to-emerald-600 h-full transition-all" style="width: <?php echo $taxaConversao; ?>%"></div>
                     </div>
                 </div>
             </div>

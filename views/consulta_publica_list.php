@@ -3,7 +3,7 @@
  * Listagem de Consignações - Consulta Pública
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.2.0
+ * @version 1.2.2
  */
 ?>
 
@@ -59,9 +59,10 @@
                    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition duration-200 group">
                     
                     <!-- Header do Card -->
-                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                    <div class="bg-gradient-to-r from-blue-600 to-emerald-600 p-4">
                         <div class="flex items-center justify-between">
                             <span class="text-white font-semibold text-lg">Consignação #<?php echo $cons['id']; ?></span>
+                            <span class="px-3 py-1 bg-white bg-opacity-90 rounded-full text-sm font-semibold shadow-sm">
                                 <?php echo translateStatus($cons['status']); ?>
                             </span>
                         </div>
@@ -83,12 +84,12 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-gray-500">Valor Total</p>
-                                <p class="text-2xl font-bold text-purple-600"><?php echo formatMoney($cons['valor_total'] ?? 0); ?></p>
+                                <p class="text-2xl font-bold text-blue-600"><?php echo formatMoney($cons['valor_total'] ?? 0); ?></p>
                             </div>
                         </div>
                         
                         <div class="pt-4 border-t border-gray-200">
-                            <div class="flex items-center justify-between text-sm text-purple-600 group-hover:text-purple-700 font-medium">
+                            <div class="flex items-center justify-between text-sm text-blue-600 group-hover:text-blue-700 font-medium">
                                 <span>Ver detalhes</span>
                                 <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -110,7 +111,7 @@
                 <?php if (!empty($estabelecimento['logo_empresa'])): ?>
                     <img src="<?php echo (defined('BASE_PATH') ? BASE_PATH : '') . '/' . $estabelecimento['logo_empresa']; ?>" alt="Logo" class="w-16 h-16 rounded-lg object-cover">
                 <?php else: ?>
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
                         <span class="text-white text-2xl font-bold">
                             <?php echo strtoupper(substr($estabelecimento['nome_empresa'] ?? 'C', 0, 1)); ?>
                         </span>
@@ -120,7 +121,7 @@
                 <div>
                     <h3 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($estabelecimento['nome_empresa'] ?? 'Consignados'); ?></h3>
                     <?php if (!empty($estabelecimento['email_empresa'])): ?>
-                        <a href="mailto:<?php echo htmlspecialchars($estabelecimento['email_empresa']); ?>" class="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1">
+                        <a href="mailto:<?php echo htmlspecialchars($estabelecimento['email_empresa']); ?>" class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
@@ -151,8 +152,8 @@
     <!-- Footer -->
     <div class="mt-12 text-center">
         <p class="text-sm text-gray-600">
-            Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium">Dante Testa</a>
+            Desenvolvido por <a href="https://dantetesta.com.br" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Dante Testa</a>
         </p>
-        <p class="text-xs text-gray-500 mt-2">Versão 1.2.0</p>
+        <p class="text-xs text-gray-500 mt-2">Versão 1.2.2</p>
     </div>
 </div>

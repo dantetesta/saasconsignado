@@ -95,7 +95,7 @@ $produtos = $stmt->fetchAll();
                             id="estabelecimento_id" 
                             name="estabelecimento_id" 
                             required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="">Selecione um estabelecimento</option>
                             <?php foreach ($estabelecimentos as $estab): ?>
@@ -113,7 +113,7 @@ $produtos = $stmt->fetchAll();
                             id="tipo" 
                             name="tipo" 
                             required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             onchange="mostrarInfoTipo(this.value)"
                         >
                             <option value="pontual">📦 Pontual (Fecha quando finalizar)</option>
@@ -135,7 +135,7 @@ $produtos = $stmt->fetchAll();
                             name="data_consignacao" 
                             required
                             value="<?php echo date('Y-m-d'); ?>"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                     </div>
 
@@ -148,7 +148,7 @@ $produtos = $stmt->fetchAll();
                             type="date" 
                             id="data_vencimento" 
                             name="data_vencimento"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                     </div>
 
@@ -161,7 +161,7 @@ $produtos = $stmt->fetchAll();
                             id="observacoes" 
                             name="observacoes" 
                             rows="3"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Informações adicionais sobre a consignação"
                         ></textarea>
                     </div>
@@ -172,7 +172,7 @@ $produtos = $stmt->fetchAll();
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-semibold text-gray-900">Produtos</h2>
-                    <button type="button" onclick="adicionarProduto()" class="px-3 py-1 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition">
+                    <button type="button" onclick="adicionarProduto()" class="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
                         + Adicionar Produto
                     </button>
                 </div>
@@ -204,13 +204,13 @@ $produtos = $stmt->fetchAll();
                     <div class="border-t border-gray-200 pt-3">
                         <div class="flex justify-between">
                             <span class="font-medium text-gray-900">Valor Total:</span>
-                            <span id="valor-total" class="text-xl font-bold text-purple-600">R$ 0,00</span>
+                            <span id="valor-total" class="text-xl font-bold text-blue-600">R$ 0,00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition shadow-md">
+                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition shadow-md">
                         Criar Consignação
                     </button>
                     <a href="/consignacoes.php" class="block w-full px-4 py-3 border border-gray-300 text-gray-700 text-center font-medium rounded-lg hover:bg-gray-50 transition">
@@ -237,7 +237,7 @@ function adicionarProduto() {
     
     div.innerHTML = `
         <div class="flex-1">
-            <select name="produtos[]" onchange="atualizarResumo()" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm">
+            <select name="produtos[]" onchange="atualizarResumo()" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                 <option value="">Selecione um produto</option>
                 ${produtosDisponiveis.map(p => `
                     <option value="${p.id}" data-preco="${p.preco_venda}" data-estoque="${p.estoque_disponivel}">
@@ -254,7 +254,7 @@ function adicionarProduto() {
                 value="1"
                 onchange="atualizarResumo()"
                 required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 placeholder="Qtd"
             >
         </div>

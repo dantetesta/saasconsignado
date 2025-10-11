@@ -42,27 +42,44 @@ include 'includes/header.php';
     </div>
 
     <!-- Status do Plano -->
-    <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg p-8 text-white mb-8">
+    <div class="bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl shadow-lg p-8 text-white mb-8">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold">
                     Plano <?php echo $tenant['plano'] === 'pro' ? 'Pro' : 'Free'; ?>
                 </h2>
-                <p class="text-purple-100 mt-1">
-                    <?php echo $tenant['nome_empresa']; ?>
+                <p class="text-blue-100 mt-1">
+                    <?php 
+                    // Tentar buscar data de cadastro do tenant (mais provável de existir)
+                    if (isset($tenant['created_at']) && $tenant['created_at']) {
+                        echo "Membro desde " . date('d/m/Y', strtotime($tenant['created_at']));
+                    } else {
+                        // Fallback: buscar a primeira consignação como referência de quando começou a usar
+                        $stmt = $db->prepare("SELECT MIN(data_consignacao) as primeira_atividade FROM consignacoes WHERE tenant_id = ?");
+                        $stmt->execute([$tenant['id']]);
+                        $atividade = $stmt->fetch();
+                        
+                        if ($atividade && $atividade['primeira_atividade']) {
+                            echo "Ativo desde " . date('d/m/Y', strtotime($atividade['primeira_atividade']));
+                        } else {
+                            // Último fallback: usar data atual
+                            echo "Membro desde hoje";
+                        }
+                    }
+                    ?>
                 </p>
             </div>
             <div class="text-right">
                 <div class="text-4xl font-bold">
                     R$ <?php echo $tenant['plano'] === 'pro' ? '20' : '0'; ?>
                 </div>
-                <div class="text-sm text-purple-100">por mês</div>
+                <div class="text-sm text-blue-100">por mês</div>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 pt-6 border-t border-purple-400">
             <div>
-                <div class="text-sm text-purple-100">Status</div>
+                <div class="text-sm text-blue-100">Status</div>
                 <div class="font-semibold">
                     <?php 
                     $status_labels = [
@@ -75,14 +92,24 @@ include 'includes/header.php';
                     ?>
                 </div>
             </div>
-            <?php if ($tenant['data_vencimento']): ?>
-                <div>
-                    <div class="text-sm text-purple-100">Próximo Pagamento</div>
+            <div>
+                <?php if ($tenant['plano'] === 'free'): ?>
+                    <div class="text-sm text-blue-100">Validade</div>
+                    <div class="font-semibold text-white">
+                        <span class="text-white">♾️</span> Ilimitado
+                    </div>
+                <?php elseif ($tenant['data_vencimento']): ?>
+                    <div class="text-sm text-blue-100">Próximo Pagamento</div>
                     <div class="font-semibold">
                         <?php echo date('d/m/Y', strtotime($tenant['data_vencimento'])); ?>
                     </div>
-                </div>
-            <?php endif; ?>
+                <?php else: ?>
+                    <div class="text-sm text-blue-100">Próximo Pagamento</div>
+                    <div class="font-semibold">
+                        Não definido
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
@@ -142,7 +169,7 @@ include 'includes/header.php';
             <div class="mt-6 pt-6 border-t border-gray-200">
                 <a 
                     href="/upgrade.php" 
-                    class="block w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition"
+                    class="block w-full text-center bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-emerald-700 transition"
                 >
                     Fazer Upgrade para Pro
                 </a>

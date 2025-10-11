@@ -1,20 +1,31 @@
 # Sistema de Controle de Consignados
 # Autor: Dante Testa (https://dantetesta.com.br)
-# Versão: 1.2.5
+# Versão: 2.0.0 - Sistema de Roteamento Avançado
 
 # Habilitar RewriteEngine
 RewriteEngine On
 
-# Permitir acesso direto a arquivos e diretórios existentes
+# Redirecionar raiz para index.php (que faz o roteamento inteligente)
+DirectoryIndex index.php
+
+# Remover trailing slash (exceto para raiz)
+RewriteCond %{REQUEST_URI} !^/$
+RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [R=301,L]
+
+# Permitir acesso direto a arquivos estáticos (CSS, JS, imagens, etc)
 RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip)$ [NC]
 RewriteRule ^ - [L]
 
+# Permitir acesso direto a diretórios existentes
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Remover .php das URLs (se arquivo .php existir)
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.+)$ $1.php [L,QSA]
+# Redirecionar todas as outras requisições para index.php (roteamento centralizado)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Redirecionar para HTTPS (descomente em produção)
 # RewriteCond %{HTTPS} off

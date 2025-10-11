@@ -197,7 +197,7 @@ include 'includes/header.php';
                     name="email_destino"
                     required
                     value="<?php echo !empty($consignacao['email']) ? htmlspecialchars($consignacao['email']) : ''; ?>"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="cliente@email.com"
                 >
                 <p class="text-xs text-gray-500 mt-1">
@@ -220,7 +220,7 @@ include 'includes/header.php';
                     name="assunto"
                     required
                     value="Nova Consignação #<?php echo $consignacao_id; ?> - <?php echo sanitize($consignacao['estabelecimento']); ?>"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
             </div>
             
@@ -233,7 +233,7 @@ include 'includes/header.php';
                     id="mensagem_adicional" 
                     name="mensagem_adicional"
                     rows="4"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Digite uma mensagem personalizada (será incluída no email)"
                 ></textarea>
             </div>
@@ -280,7 +280,7 @@ include 'includes/header.php';
                 <a href="<?php echo url('/consignacoes.php?action=view&id=' . $consignacao_id); ?>" id="btn-cancelar" class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                     Cancelar
                 </a>
-                <button type="submit" id="btn-enviar" class="flex-1 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition">
+                <button type="submit" id="btn-enviar" class="flex-1 px-6 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-emerald-700 transition">
                     📧 Enviar Email
                 </button>
             </div>

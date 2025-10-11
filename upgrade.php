@@ -141,8 +141,8 @@ include 'includes/header.php';
         <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
             <!-- Status -->
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                    <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                     </svg>
                 </div>
@@ -151,7 +151,7 @@ include 'includes/header.php';
             </div>
 
             <!-- QR Code -->
-            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                 <div class="text-center mb-4">
                     <img 
                         id="qrcode-img"
@@ -174,7 +174,7 @@ include 'includes/header.php';
                         >
                         <button 
                             onclick="copiarCodigo()"
-                            class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition"
+                            class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
                         >
                             📋 Copiar
                         </button>
@@ -300,12 +300,12 @@ include 'includes/header.php';
 
                 <!-- Plano Pro -->
                 <div class="border-2 border-purple-500 rounded-xl p-6 bg-gradient-to-br from-purple-50 to-pink-50 relative">
-                    <div class="absolute top-0 right-0 bg-purple-600 text-white px-3 py-1 rounded-bl-lg text-xs font-bold">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 rounded-bl-lg text-xs font-bold">
                         RECOMENDADO
                     </div>
                     <div class="text-center mb-6">
                         <h3 class="text-2xl font-bold text-purple-900 mb-2"><?php echo $plansInfo['pro']['name']; ?></h3>
-                        <p class="text-3xl font-bold text-purple-600"><?php echo $plansInfo['pro']['price_formatted']; ?><span class="text-lg">/mês</span></p>
+                        <p class="text-3xl font-bold text-blue-600"><?php echo $plansInfo['pro']['price_formatted']; ?><span class="text-lg">/mês</span></p>
                     </div>
                     <ul class="space-y-3 mb-6">
                         <?php foreach ($plansInfo['pro']['features'] as $feature): ?>
@@ -325,7 +325,7 @@ include 'includes/header.php';
                     <button 
                         type="submit"
                         name="criar_pix"
-                        class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg rounded-xl hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105 shadow-lg"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-emerald-700 transition transform hover:scale-105 shadow-lg"
                     >
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
@@ -360,8 +360,8 @@ include 'includes/header.php';
             </div>
 
             <div class="bg-white rounded-xl shadow-md p-6 text-center">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
