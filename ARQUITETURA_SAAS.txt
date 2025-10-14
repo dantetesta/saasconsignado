@@ -1,0 +1,465 @@
+===============================================
+🏗️ ARQUITETURA DO SISTEMA SAAS
+===============================================
+
+Sistema de Consignados - Versão 2.0.0
+Desenvolvido por: Dante Testa (https://dantetesta.com.br)
+
+===============================================
+📊 DIAGRAMA DE FLUXO
+===============================================
+
+NOVO USUÁRIO:
+┌─────────────────┐
+│  register.php   │ → Cadastro self-service
+└────────┬────────┘
+         │ Cria tenant, usuário, assinatura Free
+         ↓
+┌─────────────────┐
+│   login.php     │ → Login automático
+└────────┬────────┘
+         │ Define tenant na sessão
+         ↓
+┌─────────────────┐
+│   index.php     │ → Dashboard
+└─────────────────┘
+
+UPGRADE FREE → PRO:
+┌─────────────────┐
+│  upgrade.php    │ → Escolhe PIX/Boleto
+└────────┬────────┘
+         │ Chama PagouIntegration
+         ↓
+┌─────────────────┐
+│ Pagou.com.br    │ → Gera cobrança
+└────────┬────────┘
+         │ Retorna dados de pagamento
+         ↓
+┌─────────────────┐
+│  Exibe QR Code  │ → Usuário paga
+└────────┬────────┘
+         │ Pagamento confirmado
+         ↓
+┌─────────────────┐
+│ webhooks/       │ → Recebe confirmação
+│ pagou.php       │
+└────────┬────────┘
+         │ Ativa plano Pro
+         ↓
+┌─────────────────┐
+│ assinatura.php  │ → Dashboard atualizado
+└─────────────────┘
+
+===============================================
+🗄️ ESTRUTURA DE DADOS
+===============================================
+
+TENANT (Empresa):
+┌──────────────────────────────────┐
+│ id: 1                            │
+│ nome_empresa: "Pipoca Gourmet"   │
+│ plano: "free" ou "pro"           │
+│ limite_estabelecimentos: 5       │
+│ limite_consignacoes: 5           │
+└──────────────────────────────────┘
+         │
+         ├─── USUÁRIOS (tenant_id: 1)
+         │    └─ Admin da empresa
+         │
+         ├─── ESTABELECIMENTOS (tenant_id: 1)
+         │    └─ Lojas/Clientes
+         │
+         ├─── PRODUTOS (tenant_id: 1)
+         │    └─ Catálogo
+         │
+         └─── CONSIGNAÇÕES (tenant_id: 1)
+              └─ Operações
+
+ISOLAMENTO:
+Tenant 1 ──X── Tenant 2  (Nunca se cruzam!)
+
+===============================================
+🔐 SEGURANÇA MULTI-TENANT
+===============================================
+
+CAMADA 1 - SESSÃO:
+┌─────────────────────────────────────┐
+│ $_SESSION['tenant_id'] = 1          │
+│ $_SESSION['user_id'] = 5            │
+└─────────────────────────────────────┘
+
+CAMADA 2 - MIDDLEWARE:
+┌─────────────────────────────────────┐
+│ TenantMiddleware::initialize()      │
+│   → Valida tenant_id da sessão      │
+│   → Armazena em variável estática   │
+└─────────────────────────────────────┘
+
+CAMADA 3 - QUERIES:
+┌─────────────────────────────────────┐
+│ SELECT * FROM estabelecimentos      │
+│ WHERE tenant_id = 1                 │← Sempre!
+│ AND ativo = 1                       │
+└─────────────────────────────────────┘
+
+CAMADA 4 - FOREIGN KEYS:
+┌─────────────────────────────────────┐
+│ CONSTRAINT fk_tenant                │
+│ FOREIGN KEY (tenant_id)             │
+│ REFERENCES tenants(id)              │
+│ ON DELETE CASCADE                   │
+└─────────────────────────────────────┘
+
+===============================================
+💰 FLUXO DE PAGAMENTO
+===============================================
+
+ASSINATURA PRO (R$ 20/mês):
+
+1. USUÁRIO:
+   upgrade.php → Clica "Fazer Upgrade"
+   
+2. SISTEMA:
+   PagouIntegration::createSubscription()
+   → Cria customer no Pagou
+   → Cria cobrança recorrente
+   → Salva em subscriptions (status: pendente)
+   → Salva em payment_transactions
+   
+3. PAGOU:
+   → Gera PIX ou Boleto
+   → Retorna payment_url
+   
+4. USUÁRIO:
+   → Paga PIX/Boleto
+   
+5. PAGOU:
+   → Envia webhook para /webhooks/pagou.php
+   
+6. SISTEMA:
+   webhooks/pagou.php
+   → Valida webhook
+   → Atualiza subscription (status: ativa)
+   → Atualiza tenant (plano: pro)
+   → Remove limites
+   
+7. RESULTADO:
+   → Badge muda para "PRO"
+   → Funcionalidades liberadas
+   → Renovação automática em 30 dias
+
+===============================================
+📧 FLUXO DE EMAIL PERSONALIZADO
+===============================================
+
+CONFIGURAÇÃO (Apenas Pro):
+
+1. USUÁRIO:
+   assinatura.php → Configura email
+   
+2. SISTEMA:
+   MultiTenantEmailManager::requestEmailVerification()
+   → Chama API Postmark
+   → Cria Sender Signature
+   
+3. POSTMARK:
+   → Envia email de verificação
+   
+4. USUÁRIO:
+   → Clica link no email
+   
+5. POSTMARK:
+   → Envia webhook para /webhooks/postmark.php
+   
+6. SISTEMA:
+   → Marca email como verificado
+   → Atualiza tenant (smtp_status: verificado)
+   
+7. ENVIO DE EMAILS:
+   sendTenantEmail()
+   → From: sistema@seudominio.com
+   → From Name: "Pipoca Gourmet" ← Nome da empresa
+   → Reply-To: contato@pipocagourmet.com ← Email verificado
+
+===============================================
+🎯 VERIFICAÇÃO DE LIMITES
+===============================================
+
+PLANO FREE:
+┌─────────────────────────────────────┐
+│ Criar Estabelecimento:              │
+│                                     │
+│ 1. Usuario clica "Novo"             │
+│ 2. TenantMiddleware::               │
+│    canCreateEstabelecimento()       │
+│ 3. Conta estabelecimentos atuais   │
+│ 4. Se >= 5: BLOQUEIA               │
+│ 5. Mostra: "Faça upgrade"          │
+│ 6. Se < 5: PERMITE                 │
+└─────────────────────────────────────┘
+
+PLANO PRO:
+┌─────────────────────────────────────┐
+│ limite_estabelecimentos = NULL      │
+│ limite_consignacoes = NULL          │
+│ → SEMPRE PERMITE                    │
+└─────────────────────────────────────┘
+
+===============================================
+🌐 STACK TECNOLÓGICA
+===============================================
+
+BACKEND:
+├─ PHP 8.0+ (Lógica de negócio)
+├─ MySQL 8.0+ (Banco de dados)
+├─ PDO (Acesso ao banco)
+└─ Session (Autenticação)
+
+FRONTEND:
+├─ HTML5 (Estrutura)
+├─ TailwindCSS (Estilização)
+├─ JavaScript Vanilla (Interatividade)
+└─ Mobile-First (Design responsivo)
+
+INTEGRAÇÕES:
+├─ Pagou.com.br (Pagamentos)
+│   ├─ API REST
+│   ├─ Webhooks
+│   └─ PIX + Boleto
+│
+└─ Postmark (Emails)
+    ├─ API REST
+    ├─ Webhooks
+    └─ Sender Signatures
+
+INFRAESTRUTURA:
+├─ Servidor Web (Apache/Nginx)
+├─ SSL/HTTPS (Obrigatório)
+├─ CURL (Chamadas API)
+└─ Cron (Jobs automáticos - opcional)
+
+===============================================
+📁 ORGANIZAÇÃO DE ARQUIVOS
+===============================================
+
+/
+├─ config/
+│  ├─ config.php ................. Configurações gerais
+│  ├─ database.php ............... Conexão MySQL
+│  └─ integrations.php ........... Credenciais Pagou/Postmark
+│
+├─ classes/
+│  ├─ TenantMiddleware.php ....... Isolamento multi-tenant
+│  ├─ PagouIntegration.php ....... Pagamentos
+│  └─ MultiTenantEmailManager.php. Emails
+│
+├─ includes/
+│  ├─ header.php ................. Cabeçalho (com badge)
+│  └─ footer.php ................. Rodapé
+│
+├─ webhooks/
+│  ├─ pagou.php .................. Confirmações de pagamento
+│  └─ postmark.php ............... Verificações de email
+│
+├─ logs/
+│  ├─ sistema.log ................ Erros gerais
+│  ├─ pagou_webhook.log .......... Logs Pagou
+│  └─ postmark_webhook.log ....... Logs Postmark
+│
+├─ SQL:
+│  ├─ saas_migration.sql ......... Estrutura completa
+│  └─ run_saas_migration.php ..... Executor
+│
+├─ Páginas Públicas:
+│  ├─ register.php ............... Cadastro
+│  └─ login.php .................. Login
+│
+├─ Páginas Autenticadas:
+│  ├─ index.php .................. Dashboard
+│  ├─ estabelecimentos.php ....... CRUD Estabelecimentos
+│  ├─ produtos.php ............... CRUD Produtos
+│  ├─ consignacoes.php ........... CRUD Consignações
+│  ├─ upgrade.php ................ Upgrade Free → Pro
+│  ├─ assinatura.php ............. Dashboard assinatura
+│  └─ perfil.php ................. Perfil do usuário
+│
+└─ Documentação:
+   ├─ README_SAAS.txt ............ Guia rápido
+   ├─ SAAS_COMPLETO.txt .......... Manual completo
+   ├─ CONFIGURAR_E_USAR.txt ...... Guia do usuário
+   ├─ CHECKLIST_DEPLOY.txt ....... Checklist produção
+   ├─ RESUMO_FINAL.txt ........... Resumo executivo
+   └─ ARQUITETURA_SAAS.txt ....... Este arquivo
+
+===============================================
+🔄 CICLO DE VIDA DO TENANT
+===============================================
+
+1. CRIAÇÃO (Trial):
+   ┌────────────────────────────┐
+   │ status: trial              │
+   │ plano: free                │
+   │ data_vencimento: NULL      │
+   └────────────────────────────┘
+
+2. ATIVAÇÃO (Free):
+   ┌────────────────────────────┐
+   │ status: ativo              │
+   │ plano: free                │
+   │ limite: 5/5                │
+   └────────────────────────────┘
+
+3. UPGRADE (Pro):
+   ┌────────────────────────────┐
+   │ status: ativo              │
+   │ plano: pro                 │
+   │ data_vencimento: +30 dias  │
+   │ limite: NULL (ilimitado)   │
+   └────────────────────────────┘
+
+4. RENOVAÇÃO (Automática):
+   ┌────────────────────────────┐
+   │ Webhook do Pagou           │
+   │ → data_vencimento: +30 dias│
+   └────────────────────────────┘
+
+5. CANCELAMENTO:
+   ┌────────────────────────────┐
+   │ plano: free (downgrade)    │
+   │ limite: 5/5 (restaurado)   │
+   │ dados: preservados         │
+   └────────────────────────────┘
+
+6. SUSPENSÃO (Falta pagamento):
+   ┌────────────────────────────┐
+   │ status: suspenso           │
+   │ acesso: bloqueado          │
+   │ dados: preservados         │
+   └────────────────────────────┘
+
+===============================================
+🎨 INTERFACE DO USUÁRIO
+===============================================
+
+HEADER:
+┌──────────────────────────────────────────┐
+│ [Logo] Dashboard | Consignações | ...   │
+│                                          │
+│              [Badge FREE/PRO] [Avatar ▼]│
+└──────────────────────────────────────────┘
+                                    │
+                                    ├─ Meu Perfil
+                                    ├─ Minha Assinatura
+                                    ├─ Fazer Upgrade (se Free)
+                                    └─ Sair
+
+DASHBOARD:
+┌──────────────────────────────────────────┐
+│ Bem-vindo! Você está no plano FREE       │
+│ [Fazer Upgrade]                          │
+├──────────────────────────────────────────┤
+│ ┌────┐ ┌────┐ ┌────┐ ┌────┐           │
+│ │ 5  │ │ 12 │ │ 8  │ │R$2K│           │
+│ │Est.│ │Prod│ │Cons│ │Vend│           │
+│ └────┘ └────┘ └────┘ └────┘           │
+└──────────────────────────────────────────┘
+
+ESTABELECIMENTOS (Free com limite):
+┌──────────────────────────────────────────┐
+│ ⚠️ Limite: 5/5 estabelecimentos          │
+│ Faça upgrade para adicionar mais!        │
+│ [Fazer Upgrade]                          │
+├──────────────────────────────────────────┤
+│ Lista de estabelecimentos...             │
+└──────────────────────────────────────────┘
+
+===============================================
+💡 DECISÕES DE ARQUITETURA
+===============================================
+
+1. MULTI-TENANCY POR LINHA (Row-Level):
+   ✅ Mais simples de implementar
+   ✅ Melhor para escala inicial
+   ✅ Backup unificado
+   ❌ Menos isolamento físico
+
+2. PLANOS SIMPLES (2 opções):
+   ✅ Fácil decisão do usuário
+   ✅ Menos complexidade
+   ✅ Conversão mais clara
+   
+3. PAGAMENTO MENSAL (não anual):
+   ✅ Barreira de entrada menor
+   ✅ Flexibilidade para usuário
+   ✅ Churn mais controlado
+
+4. FREE GENEROSO (5/5):
+   ✅ Atrai mais usuários
+   ✅ Permite teste real
+   ✅ Conversão natural ao crescer
+
+5. PRO ACESSÍVEL (R$ 20):
+   ✅ Competitivo no mercado
+   ✅ Valor percebido alto
+   ✅ Margem sustentável
+
+===============================================
+📈 ESCALABILIDADE
+===============================================
+
+VERTICAL (Curto prazo):
+├─ Otimização de queries
+├─ Índices no banco
+├─ Cache de sessões
+└─ CDN para assets
+
+HORIZONTAL (Longo prazo):
+├─ Sharding por tenant_id
+├─ Read replicas
+├─ Load balancer
+└─ Microservices
+
+ESTIMATIVA:
+┌────────────────────────────────┐
+│ 1 servidor: ~500 tenants       │
+│ 2 servidores: ~1.500 tenants   │
+│ 5 servidores: ~5.000 tenants   │
+└────────────────────────────────┘
+
+===============================================
+🎓 LIÇÕES APRENDIDAS
+===============================================
+
+✅ ACERTOS:
+- tenant_id em TODAS as tabelas
+- Middleware centralizado
+- Planos simples e claros
+- Webhooks para automação
+- Documentação completa
+
+⚠️ PONTOS DE ATENÇÃO:
+- Sempre validar tenant_id
+- Monitorar logs de webhook
+- Testar isolamento constantemente
+- Backup antes de deploy
+- Performance em queries com JOIN
+
+===============================================
+🚀 PRONTO PARA PRODUÇÃO!
+===============================================
+
+Este sistema foi desenvolvido seguindo:
+✅ Boas práticas de desenvolvimento
+✅ Padrões de segurança SaaS
+✅ Arquitetura escalável
+✅ Código limpo e documentado
+✅ Mobile-first
+✅ Multi-tenancy robusto
+
+Desenvolvido com dedicação por:
+Dante Testa
+https://dantetesta.com.br
+
+Versão: 2.0.0 SaaS
+Data: 03/10/2025
+===============================================

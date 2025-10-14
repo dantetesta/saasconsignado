@@ -1,0 +1,73 @@
+# Sistema de Controle de Consignados
+# Autor: Dante Testa (https://dantetesta.com.br)
+
+# Arquivos de configuração sensíveis
+config/email.php
+config/integrations.php
+composer.phar
+
+# Arquivos temporários SaaS
+create_tenants.php
+
+# Logs
+*.log
+error_log
+debug.log
+
+# Arquivos temporários do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs e editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Dependências (se usar Composer no futuro)
+/vendor/
+composer.lock
+
+# Uploads (ignorar conteúdo mas manter estrutura)
+/uploads/produtos/*
+!/uploads/produtos/.gitkeep
+/uploads/index.php
+
+# Cache
+/cache/*
+!/cache/.gitkeep
+/tmp/*
+!/tmp/.gitkeep
+
+# Backups
+*.sql.gz
+*.sql.zip
+backup_*.sql
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Node modules (se adicionar build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build e distribuição
+/dist/
+/build/
+
+# Arquivos de teste
+/tests/coverage/
+phpunit.xml
+.phpunit.result.cache
