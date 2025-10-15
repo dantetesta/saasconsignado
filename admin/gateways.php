@@ -38,7 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     elseif ($_POST['action'] === 'configure') {
         // Configurar credenciais
         $apiKey = trim($_POST['api_key'] ?? '');
+        $currentApiKey = trim($_POST['current_api_key'] ?? '');
         $ambiente = $_POST['ambiente'] ?? 'production';
+        
+        // Se o campo estiver vazio, manter a chave atual (caso já configurada)
+        if (empty($apiKey) && !empty($currentApiKey)) {
+            $apiKey = $currentApiKey;
+        }
         
         if (empty($apiKey)) {
             $error = 'API Key é obrigatória';
@@ -275,6 +281,7 @@ $pageTitle = 'Gateways de Pagamento';
             <form method="POST" id="configForm">
                 <input type="hidden" name="action" value="configure">
                 <input type="hidden" name="gateway_id" id="modal_gateway_id">
+                <input type="hidden" name="current_api_key" id="current_api_key">
                 
                 <!-- Header -->
                 <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white p-6 rounded-t-2xl">
@@ -431,6 +438,7 @@ $pageTitle = 'Gateways de Pagamento';
             document.getElementById('modal_gateway_name').textContent = gatewayName;
             
             const apiKeyInput = document.getElementById('modal_api_key');
+            const currentApiKeyInput = document.getElementById('current_api_key');
             const toggleBtn = document.getElementById('toggleApiKeyBtn');
             
             // Preencher campos se já configurado
@@ -438,10 +446,14 @@ $pageTitle = 'Gateways de Pagamento';
                 currentApiKey = config.api_key;
                 isApiKeyMasked = true;
                 
+                // Salvar chave atual no campo hidden
+                currentApiKeyInput.value = config.api_key;
+                
                 // Mostrar chave mascarada
                 apiKeyInput.value = maskApiKey(config.api_key);
                 apiKeyInput.type = 'text';
                 apiKeyInput.placeholder = 'Chave configurada (oculta por segurança)';
+                apiKeyInput.removeAttribute('required'); // Remover required quando já configurada
                 toggleBtn.textContent = '🔄 Alterar';
                 
                 // Ao focar, limpar para permitir nova entrada
@@ -465,9 +477,11 @@ $pageTitle = 'Gateways de Pagamento';
                 // Limpar campos
                 currentApiKey = '';
                 isApiKeyMasked = false;
+                currentApiKeyInput.value = '';
                 apiKeyInput.value = '';
                 apiKeyInput.type = 'password';
                 apiKeyInput.placeholder = 'Ex: 6476a737-7211-4e7c-ba1f-639eff09e270';
+                apiKeyInput.setAttribute('required', 'required'); // Adicionar required quando nova
                 toggleBtn.textContent = '👁️ Mostrar';
                 document.getElementById('ambiente_production').checked = true;
             }
