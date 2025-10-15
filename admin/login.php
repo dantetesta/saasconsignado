@@ -67,13 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="w-full max-w-md">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
+            <?php
+            require_once '../includes/system_branding.php';
+            $systemName = SystemBranding::getSystemName();
+            ?>
             <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-                <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
-                </svg>
+                <?php echo SystemBranding::renderLogo('w-10 h-10', 'w-6 h-6'); ?>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
-            <p class="text-blue-200">Acesso restrito ao dono do SaaS</p>
+            <p class="text-blue-200">Acesso restrito - <?php echo htmlspecialchars($systemName); ?></p>
         </div>
 
         <!-- Card de Login -->
