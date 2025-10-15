@@ -299,16 +299,26 @@ $pageTitle = 'Gateways de Pagamento';
                             🔑 API Key / Token
                             <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="api_key" 
-                            id="modal_api_key"
-                            required
-                            placeholder="Ex: 6476a737-7211-4e7c-ba1f-639eff09e270"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                        >
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                name="api_key" 
+                                id="modal_api_key"
+                                required
+                                placeholder="Ex: 6476a737-7211-4e7c-ba1f-639eff09e270"
+                                class="w-full px-4 py-3 pr-24 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                            >
+                            <button 
+                                type="button" 
+                                onclick="toggleApiKeyVisibility()" 
+                                class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded transition"
+                                id="toggleApiKeyBtn"
+                            >
+                                👁️ Mostrar
+                            </button>
+                        </div>
                         <p class="text-xs text-gray-500 mt-2">
-                            💡 Obtenha sua API Key no painel do gateway de pagamento
+                            💡 Obtenha sua API Key no painel do gateway de pagamento. A chave será ocultada após salvar.
                         </p>
                     </div>
 
@@ -393,13 +403,58 @@ $pageTitle = 'Gateways de Pagamento';
     </div>
 
     <script>
+        let currentApiKey = '';
+        let isApiKeyMasked = false;
+        
+        function maskApiKey(apiKey) {
+            if (!apiKey || apiKey.length < 8) return apiKey;
+            // Mostrar apenas os últimos 4 caracteres
+            const lastChars = apiKey.slice(-4);
+            return '••••••••••••••••••••••••••••••••' + lastChars;
+        }
+        
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('modal_api_key');
+            const btn = document.getElementById('toggleApiKeyBtn');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈 Ocultar';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️ Mostrar';
+            }
+        }
+        
         function openConfigModal(gatewayId, gatewayName, config) {
             document.getElementById('modal_gateway_id').value = gatewayId;
             document.getElementById('modal_gateway_name').textContent = gatewayName;
             
+            const apiKeyInput = document.getElementById('modal_api_key');
+            const toggleBtn = document.getElementById('toggleApiKeyBtn');
+            
             // Preencher campos se já configurado
             if (config && config.api_key) {
-                document.getElementById('modal_api_key').value = config.api_key;
+                currentApiKey = config.api_key;
+                isApiKeyMasked = true;
+                
+                // Mostrar chave mascarada
+                apiKeyInput.value = maskApiKey(config.api_key);
+                apiKeyInput.type = 'text';
+                apiKeyInput.placeholder = 'Chave configurada (oculta por segurança)';
+                toggleBtn.textContent = '🔄 Alterar';
+                
+                // Ao focar, limpar para permitir nova entrada
+                apiKeyInput.addEventListener('focus', function clearOnFocus() {
+                    if (isApiKeyMasked) {
+                        apiKeyInput.value = '';
+                        apiKeyInput.type = 'password';
+                        apiKeyInput.placeholder = 'Digite a nova API Key ou deixe em branco para manter';
+                        toggleBtn.textContent = '👁️ Mostrar';
+                        isApiKeyMasked = false;
+                    }
+                    apiKeyInput.removeEventListener('focus', clearOnFocus);
+                });
                 
                 if (config.ambiente === 'sandbox') {
                     document.getElementById('ambiente_sandbox').checked = true;
@@ -408,7 +463,12 @@ $pageTitle = 'Gateways de Pagamento';
                 }
             } else {
                 // Limpar campos
-                document.getElementById('modal_api_key').value = '';
+                currentApiKey = '';
+                isApiKeyMasked = false;
+                apiKeyInput.value = '';
+                apiKeyInput.type = 'password';
+                apiKeyInput.placeholder = 'Ex: 6476a737-7211-4e7c-ba1f-639eff09e270';
+                toggleBtn.textContent = '👁️ Mostrar';
                 document.getElementById('ambiente_production').checked = true;
             }
             
@@ -417,6 +477,11 @@ $pageTitle = 'Gateways de Pagamento';
         
         function closeConfigModal() {
             document.getElementById('configModal').classList.add('hidden');
+            // Reset
+            const apiKeyInput = document.getElementById('modal_api_key');
+            apiKeyInput.type = 'password';
+            document.getElementById('toggleApiKeyBtn').textContent = '👁️ Mostrar';
+            isApiKeyMasked = false;
         }
         
         // Fechar ao clicar fora
