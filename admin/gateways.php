@@ -233,8 +233,16 @@ $pageTitle = 'Gateways de Pagamento';
                             </span>
                         <?php endif; ?>
                         
+                        <?php
+                        // Decodificar configuração se for string JSON
+                        $config = $gateway['configuracao'];
+                        if (is_string($config)) {
+                            $config = json_decode($config, true);
+                        }
+                        $configJson = json_encode($config ?: null);
+                        ?>
                         <button 
-                            onclick="openConfigModal(<?php echo $gateway['id']; ?>, '<?php echo htmlspecialchars($gateway['nome']); ?>', <?php echo htmlspecialchars(json_encode($gateway['configuracao'])); ?>)"
+                            onclick='openConfigModal(<?php echo $gateway['id']; ?>, <?php echo json_encode($gateway['nome']); ?>, <?php echo $configJson; ?>)'
                             class="float-right px-3 py-1 text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
                         >
                             ⚙️ Configurar
@@ -434,6 +442,8 @@ $pageTitle = 'Gateways de Pagamento';
         }
         
         function openConfigModal(gatewayId, gatewayName, config) {
+            console.log('Opening modal with config:', config); // Debug
+            
             document.getElementById('modal_gateway_id').value = gatewayId;
             document.getElementById('modal_gateway_name').textContent = gatewayName;
             
@@ -443,6 +453,7 @@ $pageTitle = 'Gateways de Pagamento';
             
             // Preencher campos se já configurado
             if (config && config.api_key) {
+                console.log('API Key found:', config.api_key); // Debug
                 currentApiKey = config.api_key;
                 isApiKeyMasked = true;
                 
