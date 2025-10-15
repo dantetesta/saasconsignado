@@ -3,15 +3,30 @@
  * Configuração de Conexão com Banco de Dados
  * 
  * @author Dante Testa <https://dantetesta.com.br>
- * @version 1.0.0
+ * @version 2.1.0 - Implementação de variáveis de ambiente
  */
 
-// Configurações do banco de dados
-define('DB_HOST', '187.33.241.61');
-define('DB_USER', 'amopipocagourmet_saasconsignado');
-define('DB_PASS', 'amopipocagourmet_saasconsignado');
-define('DB_NAME', 'amopipocagourmet_saasconsignado');
-define('DB_CHARSET', 'utf8mb4');
+// Carregar classe EnvLoader
+require_once __DIR__ . '/../classes/EnvLoader.php';
+
+// Carregar variáveis de ambiente
+EnvLoader::load();
+
+// Validar variáveis obrigatórias
+$required = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME'];
+$missing = EnvLoader::validateRequired($required);
+
+if (!empty($missing)) {
+    error_log("Variáveis de ambiente faltando: " . implode(', ', $missing));
+    die("Erro de configuração: Variáveis de ambiente não encontradas. Verifique o arquivo .env");
+}
+
+// Configurações do banco de dados usando variáveis de ambiente
+define('DB_HOST', EnvLoader::get('DB_HOST', 'localhost'));
+define('DB_USER', EnvLoader::get('DB_USER', ''));
+define('DB_PASS', EnvLoader::get('DB_PASS', ''));
+define('DB_NAME', EnvLoader::get('DB_NAME', ''));
+define('DB_CHARSET', EnvLoader::get('DB_CHARSET', 'utf8mb4'));
 
 /**
  * Classe de conexão com o banco de dados usando PDO
