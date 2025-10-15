@@ -27,6 +27,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['salvar'])) {
     try {
         $db->beginTransaction();
         
+        // Processar upload de logotipo
+        if (isset($_FILES['sistema_logotipo']) && $_FILES['sistema_logotipo']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../uploads/branding/';
+            
+            // Criar diretório se não existir
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $fileInfo = pathinfo($_FILES['sistema_logotipo']['name']);
+            $extension = strtolower($fileInfo['extension']);
+            
+            // Validar extensão
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
+            if (!in_array($extension, $allowedExtensions)) {
+                throw new Exception('Formato de imagem não permitido. Use: JPG, PNG, GIF, SVG ou WebP');
+            }
+            
+            // Validar tamanho (máx 2MB)
+            if ($_FILES['sistema_logotipo']['size'] > 2 * 1024 * 1024) {
+                throw new Exception('Imagem muito grande. Tamanho máximo: 2MB');
+            }
+            
+            // Gerar nome único
+            $fileName = 'logo_' . time() . '.' . $extension;
+            $filePath = $uploadDir . $fileName;
+            
+            // Mover arquivo
+            if (move_uploaded_file($_FILES['sistema_logotipo']['tmp_name'], $filePath)) {
+                // Deletar logo antigo se existir
+                $stmt = $db->prepare("SELECT valor FROM system_settings WHERE chave = 'sistema_logotipo'");
+                $stmt->execute();
+                $oldLogo = $stmt->fetchColumn();
+                
+                if ($oldLogo && file_exists('../' . $oldLogo)) {
+                    unlink('../' . $oldLogo);
+                }
+                
+                // Salvar novo caminho
+                $_POST['sistema_logotipo'] = 'uploads/branding/' . $fileName;
+            } else {
+                throw new Exception('Erro ao fazer upload da imagem');
+            }
+        }
+        
         // Atualizar cada configuração
         foreach ($_POST as $key => $value) {
             if ($key !== 'salvar') {
@@ -148,7 +193,7 @@ $pageTitle = 'Configurações do Sistema';
             </div>
         <?php endif; ?>
 
-        <form method="POST" class="space-y-6">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
             
             <?php foreach ($settings as $grupo => $configs): ?>
                 <!-- Card por Grupo -->
@@ -216,6 +261,45 @@ $pageTitle = 'Configurações do Sistema';
                                             <?php if (strpos($config['chave'], 'dias') !== false): ?>
                                                 <span class="text-sm text-gray-600">dias</span>
                                             <?php endif; ?>
+                                        </div>
+                                        
+                                    <?php elseif ($config['chave'] === 'sistema_logotipo'): ?>
+                                        <!-- Upload de Logotipo -->
+                                        <div class="space-y-4">
+                                            <?php if (!empty($config['valor'])): ?>
+                                                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                    <img 
+                                                        src="/<?php echo htmlspecialchars($config['valor']); ?>" 
+                                                        alt="Logotipo atual" 
+                                                        class="h-16 w-auto object-contain bg-white p-2 rounded border border-gray-300"
+                                                    >
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-medium text-gray-900">Logotipo Atual</p>
+                                                        <p class="text-xs text-gray-500"><?php echo basename($config['valor']); ?></p>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <div>
+                                                <label class="block">
+                                                    <span class="sr-only">Escolher logotipo</span>
+                                                    <input 
+                                                        type="file" 
+                                                        name="sistema_logotipo" 
+                                                        accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
+                                                        class="block w-full text-sm text-gray-500
+                                                            file:mr-4 file:py-2 file:px-4
+                                                            file:rounded-lg file:border-0
+                                                            file:text-sm file:font-semibold
+                                                            file:bg-blue-50 file:text-blue-700
+                                                            hover:file:bg-blue-100
+                                                            cursor-pointer"
+                                                    >
+                                                </label>
+                                                <p class="mt-2 text-xs text-gray-500">
+                                                    📌 Formatos: JPG, PNG, GIF, SVG, WebP | Tamanho máximo: 2MB
+                                                </p>
+                                            </div>
                                         </div>
                                         
                                     <?php else: ?>
