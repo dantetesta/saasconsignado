@@ -92,6 +92,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
+        // Remover pagamento individual
+        elseif ($action === 'delete_payment') {
+            $paymentId = (int)$_POST['payment_id'];
+            
+            // Buscar dados do pagamento antes de deletar
+            $stmt = $db->prepare("
+                SELECT sp.*, t.nome_empresa as tenant_name 
+                FROM subscription_payments sp 
+                JOIN tenants t ON sp.tenant_id = t.id 
+                WHERE sp.id = ?
+            ");
+            $stmt->execute([$paymentId]);
+            $payment = $stmt->fetch();
+            
+            if (!$payment) {
+                throw new Exception('Pagamento não encontrado');
+            }
+            
+            // Deletar pagamento
+            $stmt = $db->prepare("DELETE FROM subscription_payments WHERE id = ?");
+            $stmt->execute([$paymentId]);
+            
+            // Log da ação
+            $superAdmin->logAction('delete_payment', $payment['tenant_id'], "Pagamento #{$paymentId} removido - {$payment['tenant_name']} - R$ {$payment['amount']}");
+            
+            $success = 'Pagamento removido com sucesso!';
+        }
+        
+        // Remover pagamentos selecionados
+        elseif ($action === 'delete_selected') {
+            $paymentIds = $_POST['payment_ids'] ?? [];
+            
+            if (empty($paymentIds)) {
+                throw new Exception('Nenhum pagamento selecionado');
+            }
+            
+            // Validar IDs
+            $paymentIds = array_map('intval', $paymentIds);
+            $placeholders = implode(',', array_fill(0, count($paymentIds), '?'));
+            
+            // Buscar dados dos pagamentos antes de deletar
+            $stmt = $db->prepare("
+                SELECT sp.id, sp.amount, t.nome_empresa as tenant_name 
+                FROM subscription_payments sp 
+                JOIN tenants t ON sp.tenant_id = t.id 
+                WHERE sp.id IN ($placeholders)
+            ");
+            $stmt->execute($paymentIds);
+            $payments = $stmt->fetchAll();
+            
+            // Deletar pagamentos
+            $stmt = $db->prepare("DELETE FROM subscription_payments WHERE id IN ($placeholders)");
+            $stmt->execute($paymentIds);
+            
+            $count = count($payments);
+            
+            // Log da ação
+            $paymentList = implode(', ', array_map(fn($p) => "#{$p['id']}", $payments));
+            $superAdmin->logAction('delete_payments_bulk', null, "Removidos {$count} pagamentos em massa: {$paymentList}");
+            
+            $success = "{$count} pagamento(s) removido(s) com sucesso!";
+        }
+        
+        // Remover todos os pagamentos (com filtros aplicados)
+        elseif ($action === 'delete_all') {
+            $confirmText = $_POST['confirm_text'] ?? '';
+            
+            if ($confirmText !== 'DELETAR TUDO') {
+                throw new Exception('Confirmação inválida. Digite "DELETAR TUDO" para confirmar.');
+            }
+            
+            // Aplicar mesmos filtros da listagem
+            $whereConditions = [];
+            $params = [];
+            
+            if ($status) {
+                $whereConditions[] = "sp.status = ?";
+                $params[] = $status;
+            }
+            
+            if ($tenant) {
+                $whereConditions[] = "t.nome_empresa LIKE ?";
+                $params[] = "%{$tenant}%";
+            }
+            
+            if ($dateFrom) {
+                $whereConditions[] = "DATE(sp.created_at) >= ?";
+                $params[] = $dateFrom;
+            }
+            
+            if ($dateTo) {
+                $whereConditions[] = "DATE(sp.created_at) <= ?";
+                $params[] = $dateTo;
+            }
+            
+            $whereClause = $whereConditions ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
+            
+            // Contar quantos serão deletados
+            $stmt = $db->prepare("
+                SELECT COUNT(*) as total 
+                FROM subscription_payments sp
+                JOIN tenants t ON sp.tenant_id = t.id
+                {$whereClause}
+            ");
+            $stmt->execute($params);
+            $count = $stmt->fetch()['total'];
+            
+            if ($count === 0) {
+                throw new Exception('Nenhum pagamento encontrado com os filtros aplicados');
+            }
+            
+            // Deletar pagamentos
+            $stmt = $db->prepare("
+                DELETE sp FROM subscription_payments sp
+                JOIN tenants t ON sp.tenant_id = t.id
+                {$whereClause}
+            ");
+            $stmt->execute($params);
+            
+            // Log da ação
+            $filterInfo = [];
+            if ($status) $filterInfo[] = "status={$status}";
+            if ($tenant) $filterInfo[] = "tenant={$tenant}";
+            if ($dateFrom) $filterInfo[] = "de={$dateFrom}";
+            if ($dateTo) $filterInfo[] = "até={$dateTo}";
+            $filterStr = $filterInfo ? ' [Filtros: ' . implode(', ', $filterInfo) . ']' : '';
+            
+            $superAdmin->logAction('delete_payments_all', null, "Removidos TODOS os {$count} pagamentos{$filterStr}");
+            
+            $success = "{$count} pagamento(s) removido(s) com sucesso!";
+        }
+        
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -283,12 +415,46 @@ include 'includes/menu.php';
             </form>
         </div>
 
+        <!-- Ações em Massa -->
+        <div id="bulkActions" class="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 mb-4 hidden">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-gray-700">
+                        <span id="selectedCount">0</span> pagamento(s) selecionado(s)
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="deleteSelected()" 
+                            class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
+                        🗑️ Remover Selecionados
+                    </button>
+                    <button onclick="clearSelection()" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
+                        Limpar Seleção
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Lista de Pagamentos -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+            <!-- Header com ações -->
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4">
+                <h3 class="text-lg font-semibold text-gray-900">📋 Pagamentos</h3>
+                <button onclick="openDeleteAllModal()" 
+                        class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
+                    🗑️ Remover Todos (Filtrados)
+                </button>
+            </div>
+            
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
+                            <th class="px-6 py-3 text-left">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" 
+                                       class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assinante</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
@@ -301,6 +467,10 @@ include 'includes/menu.php';
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($payments as $payment): ?>
                             <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4">
+                                    <input type="checkbox" class="payment-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                                           value="<?php echo $payment['id']; ?>" onchange="updateBulkActions()">
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900">#<?php echo $payment['id']; ?></span>
                                 </td>
@@ -342,14 +512,19 @@ include 'includes/menu.php';
                                     <div class="flex items-center justify-center gap-2">
                                         <?php if ($payment['status'] === 'paid'): ?>
                                             <button onclick="openRefundModal(<?php echo $payment['id']; ?>, '<?php echo addslashes($payment['tenant_name']); ?>', <?php echo $payment['amount']; ?>)" 
-                                                    class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                                    class="text-orange-600 hover:text-orange-900 text-sm font-medium">
                                                 Reembolsar
                                             </button>
                                         <?php endif; ?>
                                         
+                                        <button onclick="deletePayment(<?php echo $payment['id']; ?>, '<?php echo addslashes($payment['tenant_name']); ?>')" 
+                                                class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                            Remover
+                                        </button>
+                                        
                                         <a href="/admin/tenants.php?id=<?php echo $payment['tenant_id']; ?>" 
-                                           class="text-blue-600 hover:text-purple-900 text-sm font-medium">
-                                            Ver Assinante
+                                           class="text-blue-600 hover:text-blue-900 text-sm font-medium">
+                                            Ver
                                         </a>
                                     </div>
                                 </td>
@@ -412,7 +587,63 @@ include 'includes/menu.php';
         </div>
     </div>
 
+    <!-- Modal de Remover Todos -->
+    <div id="deleteAllModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">⚠️ ATENÇÃO: Remover Todos</h3>
+                        <p class="text-sm text-gray-600">Esta ação é IRREVERSÍVEL!</p>
+                    </div>
+                </div>
+                
+                <form method="POST" id="deleteAllForm">
+                    <input type="hidden" name="action" value="delete_all">
+                    
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-700 mb-3">
+                            Você está prestes a remover <strong>TODOS</strong> os pagamentos que correspondem aos filtros atuais.
+                        </p>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                            <p class="text-sm text-yellow-800">
+                                ⚠️ Esta ação não pode ser desfeita!<br>
+                                ⚠️ Todos os registros serão permanentemente excluídos!
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Digite <strong>"DELETAR TUDO"</strong> para confirmar:
+                        </label>
+                        <input type="text" name="confirm_text" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" 
+                               placeholder="DELETAR TUDO">
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeDeleteAllModal()" 
+                                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" 
+                                class="flex-1 px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                            Confirmar Remoção
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal de Reembolso
         function openRefundModal(paymentId, tenantName, amount) {
             document.getElementById('refundPaymentId').value = paymentId;
             document.getElementById('refundTenantName').textContent = tenantName;
@@ -425,10 +656,98 @@ include 'includes/menu.php';
             document.getElementById('refundForm').reset();
         }
         
-        // Fechar modal ao clicar fora
+        // Modal de Remover Todos
+        function openDeleteAllModal() {
+            document.getElementById('deleteAllModal').classList.remove('hidden');
+        }
+        
+        function closeDeleteAllModal() {
+            document.getElementById('deleteAllModal').classList.add('hidden');
+            document.getElementById('deleteAllForm').reset();
+        }
+        
+        // Remover pagamento individual
+        function deletePayment(paymentId, tenantName) {
+            if (confirm(`Tem certeza que deseja remover o pagamento #${paymentId} de ${tenantName}?\n\nEsta ação não pode ser desfeita!`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="delete_payment">
+                    <input type="hidden" name="payment_id" value="${paymentId}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+        // Seleção em massa
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.payment-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+            updateBulkActions();
+        }
+        
+        function updateBulkActions() {
+            const checkboxes = document.querySelectorAll('.payment-checkbox:checked');
+            const count = checkboxes.length;
+            const bulkActions = document.getElementById('bulkActions');
+            const selectedCount = document.getElementById('selectedCount');
+            const selectAll = document.getElementById('selectAll');
+            
+            selectedCount.textContent = count;
+            
+            if (count > 0) {
+                bulkActions.classList.remove('hidden');
+            } else {
+                bulkActions.classList.add('hidden');
+            }
+            
+            // Atualizar checkbox "selecionar todos"
+            const allCheckboxes = document.querySelectorAll('.payment-checkbox');
+            selectAll.checked = count === allCheckboxes.length && count > 0;
+        }
+        
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('.payment-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateBulkActions();
+        }
+        
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.payment-checkbox:checked');
+            const count = checkboxes.length;
+            
+            if (count === 0) {
+                alert('Nenhum pagamento selecionado!');
+                return;
+            }
+            
+            if (confirm(`Tem certeza que deseja remover ${count} pagamento(s) selecionado(s)?\n\nEsta ação não pode ser desfeita!`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                
+                let html = '<input type="hidden" name="action" value="delete_selected">';
+                checkboxes.forEach(cb => {
+                    html += `<input type="hidden" name="payment_ids[]" value="${cb.value}">`;
+                });
+                
+                form.innerHTML = html;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+        // Fechar modais ao clicar fora
         document.getElementById('refundModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeRefundModal();
+            }
+        });
+        
+        document.getElementById('deleteAllModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteAllModal();
             }
         });
     </script>
