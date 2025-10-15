@@ -42,7 +42,6 @@ $pageTitle = 'Relatório Financeiro';
                     </svg>
                     <div>
                         <h1 class="text-lg font-bold">Painel Admin</h1>
-                        <p class="text-xs opacity-90">Gestão do SaaS</p>
                     </div>
                 </div>
                 
