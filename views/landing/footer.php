@@ -4,14 +4,10 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <!-- Logo e Descrição -->
             <div class="col-span-1 md:col-span-2">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-xl font-bold text-white">SaaS Sisteminha</span>
-                </div>
+                <?php
+                require_once __DIR__ . '/../../includes/system_branding.php';
+                echo SystemBranding::renderBrand('w-10 h-10', 'w-6 h-6', 'text-xl font-bold text-white');
+                ?>
                 <p class="text-gray-400 leading-relaxed mb-4">
                     Sistema completo de gestão de consignações. Controle produtos, estabelecimentos e pagamentos de forma simples e eficiente.
                 </p>
@@ -60,7 +56,7 @@
         <!-- Bottom Bar -->
         <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-sm text-gray-500">
-                © <?php echo date('Y'); ?> SaaS Sisteminha. Todos os direitos reservados.
+                © <?php echo date('Y'); ?> <?php echo htmlspecialchars(SystemBranding::getSystemName()); ?>. Todos os direitos reservados.
             </p>
             <div class="flex gap-6 text-sm">
                 <a href="#" class="text-gray-500 hover:text-white transition">Termos de Uso</a>

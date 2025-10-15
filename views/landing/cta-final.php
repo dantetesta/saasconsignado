@@ -5,7 +5,11 @@
             Pronto para Transformar sua Gestão de Consignações?
         </h2>
         <p class="text-xl text-blue-100 mb-8 leading-relaxed">
-            Junte-se a centenas de empresas que já simplificaram sua gestão com o SaaS Sisteminha
+            <?php
+            require_once __DIR__ . '/../../includes/system_branding.php';
+            $systemName = SystemBranding::getSystemName();
+            ?>
+            Junte-se a centenas de empresas que já simplificaram sua gestão com o <?php echo htmlspecialchars($systemName); ?>
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
